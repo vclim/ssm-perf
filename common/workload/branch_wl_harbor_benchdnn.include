@@ -1,0 +1,14 @@
+if not defined benchdnn_fix_times_per_prb { $benchdnn_fix_times_per_prb = 100 }
+if not defined benchdnn_cfg { $benchdnn_cfg = "u8s8f32" }
+
+if not defined con { $con = $system.serconsole.con }
+#bp.console_string.wait-then-write $con "# " "docker pull harbor-npg.pact.intel.com/phf/benchdnn:v21.47 \n"
+bp.console_string.wait-then-write $con "# " "docker image load -i /host/nfs/site/disks/simcloud_suihaich_002/cluster/wl_files/harbor/benchdnn_v21.47.tar \n"
+bp.console_string.wait-then-write $con "# " "docker run --privileged -it harbor-npg.pact.intel.com/phf/benchdnn:v21.47 bash  \n"
+bp.console_string.wait-then-write $con "# " "export DNNL_MAX_CPU_ISA=AVX512_CORE_AMX \n"
+bp.console_string.wait-then-write $con "# " "export DNNL_VERBOSE=1 \n"
+bp.console_string.wait-then-write $con "# " "export DNNL_CPU_RUNTIME=OMP \n"
+bp.console_string.wait-then-write $con "# " "export OMP_PLACES=cores \n"
+bp.console_string.wait-then-write $con "# " "export OMP_PROC_BIND=close \n"
+bp.console_string.wait-then-write $con "# " "cd oneDNN/tests/benchdnn \n"
+$wl_run_cmd = ( "./benchdnn --engine=cpu --mode=p --fix-times-per-prb=" + $benchdnn_fix_times_per_prb + " --conv --cfg=" + $benchdnn_cfg + " --batch=inputs/conv/shapes_auto \n" )

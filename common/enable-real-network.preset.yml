@@ -1,0 +1,10 @@
+%YAML 1.2
+---
+description: Enables real network connection
+args:
+  networking:
+    create_network: True
+    real_network: True
+    i82599_present: True
+    i210_present: False
+...

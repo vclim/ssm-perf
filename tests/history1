@@ -1,0 +1,203 @@
+Port files originally saved in https://github.com/intel-innersource/frameworks.simulators.simics.cpu.simicsintegrationengineering
+into seprate repo, to avoid delay in asking for approval from Poland team
+
+commit 5964b5f17add60928e58b3b31d2717aed3e8db2c
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Fri Aug 2 12:05:27 2024 -0700
+
+    Move to DMR pre637 with 14.D.57 bios
+
+--
+commit a12dd9c8d13388d26304bea3118329b52500527e
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Wed Jul 31 21:22:52 2024 -0700
+
+    Convert esxi test
+
+commit 6cfd8dda055fd1061da590a7d153305cfe3d7817
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Wed Jul 31 20:32:49 2024 -0700
+
+    Minor fix
+
+commit 5bb25ea89aebcda3c0f5ca064aefaa880ea384a8
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Wed Jul 31 20:21:50 2024 -0700
+
+    Rename test
+
+commit 48a23e69c8aa405a9b4c8c0d131f4cd810e202b2
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Wed Jul 31 19:25:54 2024 -0700
+
+    update bhs test
+
+commit f18701389d4705b485a4473e4eb346dac404fa57
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Wed Jul 31 19:25:04 2024 -0700
+
+    Add 1dimm test
+
+commit 0ab695a08087a86c11c2298a7d19c26c7c32a955
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Wed Jul 31 18:49:32 2024 -0700
+
+    Add 1dimm config
+
+commit d480cb76cb4234d0fd10cf9efa199b3418a5042a
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Tue Jul 30 17:36:48 2024 -0700
+
+    minor fix
+
+commit 8ed063a28382e2985b204873238fdd4eee8cded8
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Tue Jul 30 17:25:12 2024 -0700
+
+    print mem decoding var
+
+--
+commit f478da53fe4954a0dc46b9941186100397a3c342
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Mon Jul 29 19:59:24 2024 -0700
+
+    Add esxi 4TB boot test
+
+--
+commit f0132a0b01b0cf7144c722861b8c96aa7aadd1ac
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Sun Jul 28 15:06:08 2024 -0700
+
+    Add esxi tests
+
+--
+commit a523d188f76c34668625a87d9a2127e651f3c5e7
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Thu Jul 25 13:57:14 2024 -0700
+
+    hide 4TB esxi boot (not working on RKL host due to vmp issue)
+
+commit 59dc6f33f8fc7eb0278eadafa6973e0bc6e5b156
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Wed Jul 24 08:20:45 2024 -0700
+
+    Rename test
+
+commit ddd7616f45af3d8db990d95ce02d66f6be50d559
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Wed Jul 24 08:20:19 2024 -0700
+
+    Add esxi 4TB bmod boot
+
+commit bb3d3825adc2a5ce10755bfc414d533f2800c071
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Tue Jul 23 18:37:25 2024 -0700
+
+    Add boot test with 4TB memory
+
+--
+commit 11bb4f2d2db5f51a0baea2d4b4540bc6dae840ee
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Tue Jul 16 20:48:31 2024 -0700
+
+    change quit to stop
+
+commit db727139d0dbfcace28020e1a84205b4f0a1a889
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Tue Jul 16 19:32:21 2024 -0700
+
+    Fix
+
+commit eb3d76dc58e37ef1c6649a275afb7edb96cbc25c
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Thu Jul 11 13:28:00 2024 -0700
+
+    Add esxi boot test
+
+commit 8393a879cf8eda9dd0397509b74493fe966106e8
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Thu Jul 4 21:46:49 2024 -0700
+
+    Enable esxi boot profiling
+
+commit b267fb6e588b9d4242909bde2d8b7fc7a1c48521
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Thu Jul 4 21:46:27 2024 -0700
+
+    Fix some workload, and hide the failing harbor_resnet50_fast
+
+commit 8cb432959d8d62e318d951599ea3ef588bc83554
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Wed Jul 3 14:18:26 2024 -0700
+
+    Fix again
+
+commit 25e25d9d499521cbb3984f1cde52173de363bc7b
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Wed Jul 3 14:10:06 2024 -0700
+
+    Add missing files
+
+--
+commit 0a5fc6544e663a8846e3985f3123adf7dd3792b0
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Sun Jun 30 21:55:23 2024 -0700
+
+    Fix typo
+
+commit 59c7542476343d54f2dcb193f8358ce92d204e2d
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Sun Jun 30 21:35:58 2024 -0700
+
+    Add workload files
+
+commit 19a4dd3505a2467e9bdfe263011463510439ef93
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Fri Jun 28 15:48:03 2024 -0700
+
+    add bhs boot and workload tests
+
+commit 37261c8495d860e85db69a1df691d93c0cb38862
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Fri Jun 28 15:47:36 2024 -0700
+
+    clean up
+
+commit 1f2c5cfb93f8587ec39040d479148f7f471b4803
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Tue Jun 25 16:05:59 2024 -0700
+
+    fix
+
+commit 6848de725594200e15e0c546d6c008c36ddcfc9f
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Tue Jun 25 16:04:43 2024 -0700
+
+    organize files
+
+commit 08b455f192a2eca49add78f5de9e6ca93c552ec3
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Tue Jun 25 09:12:27 2024 -0700
+
+    add bios boot test
+
+commit 25fcfd6da0d2a307aac2fe58993f0f91b981aa3d
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Mon Jun 24 20:57:29 2024 -0700
+
+    for ww24 perf results
+
+--
+commit 5a648547e55ef4da459a7844a6bfc89f16e69de5
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Thu Jun 20 20:05:59 2024 -0700
+
+    Fix
+
+--
+commit c578e9fa225d21fc7b03e7c5891beae997eb5679
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Wed Jun 19 20:48:07 2024 -0700
+
+    Add perf tests
+

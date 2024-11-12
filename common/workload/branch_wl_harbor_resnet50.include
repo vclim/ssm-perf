@@ -1,0 +1,23 @@
+if not defined con { $con = $system.serconsole.con }
+#bp.console_string.wait-then-write $con "# " "docker pull harbor-npg.pact.intel.com/phf/ai-resnet50-v15:v21.47 \n"
+bp.console_string.wait-then-write $con "# " "docker image load -i /host/nfs/site/disks/simcloud_suihaich_002/cluster/wl_files/harbor/ai-resnet50-v15_v21.47.tar \n"
+#if (`"amx" in simenv.perf_profile or "default" in simenv.perf_profile`) {
+#    $wl_run_cmd = "docker run --detach --rm --privileged -e TOPOLOGY=resnet50v1_5 -e MODE=latency -e PRECISION=amx_int8 -e DNNL_CPU_ISA=AVX512_CORE_AMX -e FUNCTION=inference -e DATA_TYPE=dummy -e STEPS=10 harbor-npg.pact.intel.com/phf/ai-resnet50-v15:v21.47 \n"
+#} else {
+#    $wl_run_cmd = "docker run --detach --rm --privileged -e TOPOLOGY=resnet50v1_5 -e MODE=latency -e PRECISION=avx_int8 DNNL_CPU_ISA=AVX -e FUNCTION=inference -e DATA_TYPE=dummy -e STEPS=10 harbor-npg.pact.intel.com/phf/ai-resnet50-v15:v21.47 \n"
+#}
+bp.console_string.wait-then-write $con "# " "docker run --privileged -it harbor-npg.pact.intel.com/phf/ai-resnet50-v15:v21.47 bash  \n"
+if (`"amx" in simenv.perf_profile or "default" in simenv.perf_profile`) {
+    bp.console_string.wait-then-write $con "# " "export DNNL_MAX_CPU_ISA=AVX512_CORE_AMX \n"
+} else {
+    bp.console_string.wait-then-write $con "# " "export DNNL_MAX_CPU_ISA=AVX \n"
+}
+bp.console_string.wait-then-write $con "# " "export DNNL_VERBOSE=1 \n"
+bp.console_string.wait-then-write $con "# " "export DisableAcp=\"0x1\" \n"  
+if (`"amx" in simenv.perf_profile or "default" in simenv.perf_profile`) {
+    $wl_run_cmd = "./run_test.sh --mode throughput --topology resnet50v1_5 --precision amx_int8 --function inference --data_type real \n"
+} else {
+    $wl_run_cmd = "./run_test.sh --mode throughput --topology resnet50v1_5 --precision avx_int8 --function inference --data_type real \n"
+}
+
+# in fast mode the test always hit invalid opcode, tried different combinations of DNNL_MAX_CPU_ISA and --precision, but no success, so have to skip running this test for fast mode

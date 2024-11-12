@@ -1,0 +1,9 @@
+if not defined con { $con = $system.serconsole.con }
+
+# image from "docker pull openvisualcloud/xeon-ubuntu2004-media-ffmpeg"
+bp.console_string.wait-then-write $con "# " "docker load --input /host/nfs/site/disks/simcloud_suihaich_002/cluster/wl_files/xeon-ubuntu2004-media-ffmpeg.tar \n"
+
+# docker commands are from https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/svt.md
+$wl_run_cmd = ( "docker run openvisualcloud/xeon-ubuntu2004-media-ffmpeg /bin/bash -c 'dd if=/dev/urandom bs=115200 count=300 of=test.yuv && ffmpeg -f rawvideo -vcodec rawvideo -s 320x240 -r 30 -pix_fmt yuv420p -i test.yuv -c:v libsvt_hevc -y test.mp4' \n" )
+
+$wl_wait_string = "frame=  300"

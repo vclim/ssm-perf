@@ -1,0 +1,18 @@
+if not defined con { $con = $system.serconsole.con }
+if not defined wrf_run_seconds { $wrf_run_seconds = 216 } # 3 timesteps (72sec per timestep)
+
+bp.console_string.wait-then-write $con "# " ("ln -fs /host/nfs/site/disks/simcloud_suihaich_002/cluster/wl_files/hpc/conus-12km.tar . \n")
+bp.console_string.wait-then-write $con "# " "tar -xf conus-12km.tar \n"
+bp.console_string.wait-then-write $con "# " "cd conus-12km \n"
+
+#bp.console_string.wait-then-write $con "# " "export LD_LIBRARY_PATH=/opt/intel/oneapi/compiler/2022.0.1/linux/compiler/lib/intel64_lin:/opt/intel/oneapi/compiler/2022.0.1/linux/lib:/opt/intel/oneapi/mpi/2021.5.0/libfabric/lib:/opt/intel/oneapi/mpi/2021.5.0/lib/:/opt/intel/oneapi/mpi/2021.5.0/lib/release/ \n"
+
+#need to modify the parameters in the script for small # of cores
+bp.console_string.wait-then-write $con "# " "cat ./run_wrf_new | sed -e 's/nodes=.*/nodes=1/' | sed -e 's/ppn=.*/ppn=1/' | sed -e 's/num_threads=.*/num_threads=1/' | sed -e 's/num_tiles=.*/num_tiles=1/' | sed -e 's/I_MPI_PIN_DOMAIN=.*/I_MPI_PIN_DOMAIN=auto/' | sed -e 's/I_MPI_PIN_ORDER=.*/I_MPI_PIN_ORDER=scatter/' | sed -e 's/vars.sh/vars.sh intel64/' | sed -e 's/oneapi\\/compiler\\/2021.1.1/oneapi\\/compiler\\/2022.0.1/' | sed -e 's/oneapi\\/mpi\\/2021.1.1/oneapi\\/mpi\\/2021.5.0/' > ./run_wrf_new.modified \n"
+bp.console_string.wait-then-write $con "# " "cp -p namelist.input namelist.input.orig \n"
+bp.console_string.wait-then-write $con "# " ("cat ./namelist.input.orig | sed -e 's/run_hours.*/run_hours = 0,/' | sed -e 's/run_minutes.*/run_minutes = 0,/' | sed -e 's/run_seconds.*/run_seconds = " + $wrf_run_seconds + ",/' > ./namelist.input \n")
+bp.console_string.wait-then-write $con "# " "chmod +x run_wrf_new.modified \n"
+bp.console_string.wait-then-write $con "# " "diff run_wrf_new.modified run_wrf \n"
+bp.console_string.wait-then-write $con "# " "diff namelist.input namelist.input.orig \n"
+$wl_run_cmd = "./run_wrf_new.modified \n"
+            

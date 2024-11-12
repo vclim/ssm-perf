@@ -1,0 +1,20 @@
+@class core_grouping_0:
+    cls = simics.confclass('core_grouping_0')
+    @cls.iface.concurrency_group
+    def execution_group(self, group_index):
+        if group_index == 0:
+            return [x for x in SIM_get_all_processors() if ('mcp0' in x.name) or ('s3m0' in x.name)]
+
+@class core_grouping_1:
+    cls = simics.confclass('core_grouping_1')
+    @cls.iface.concurrency_group
+    def execution_group(self, group_index):
+        if group_index == 0:
+            return [x for x in SIM_get_all_processors() if ('mcp1' in x.name) or ('s3m1' in x.name)]
+
+@SIM_create_object('core_grouping_0', 'core_grouping_0', [])
+@SIM_create_object('core_grouping_1', 'core_grouping_1', [])
+
+enable-mca
+enable-multithreading
+list-thread-domains -a 

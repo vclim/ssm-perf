@@ -1,0 +1,8 @@
+%YAML 1.2
+---
+description: Disable MagicRowHammer for performance purpose
+args:
+  knobs:
+    bios_knobs: "skip_s3m_access"
+    bios_knobs_string: "DfxEmuBiosSkipS3MAccess=1"
+...

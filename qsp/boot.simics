@@ -1,0 +1,25 @@
+load-module x86-top-secret64-comp
+load-module x86-public64-comp
+
+if not defined disk0_image { $disk0_image = /nfs/site/disks/simcloud_suihaich_002/cluster/os_files/centos-8-stream-embargo-coreserver-202112090026-simicsfs-docker-oneapi.craff }
+if not defined memory_megs { $memory_megs = 65536 }
+
+if not defined num_cores { $num_cores = 128 }
+if not defined core { $core = "dkt" }
+if $core=="gdc" { $cpu_class = "x86-goldencove-server" }
+if $core=="rwc" { $cpu_class = "x86-redwood-cove-granite-rapids" }
+if $core=="pnc" { $cpu_class = "x86-panther-cove-diamond-rapids" }
+if $core=="dkt" { $cpu_class = "x86-darkmont-clearwater-forest" }
+
+run-command-file targets/qsp-x86/qsp-clear-linux.simics
+
+
+list-processors-summary
+list-vars
+log-level 0
+log-type $system -disable spec-viol -r
+log-type $system -disable error -r
+log-type $system -disable warning -r
+log-type $system -disable unimpl -r
+
+run

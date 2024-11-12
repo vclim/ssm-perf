@@ -1,0 +1,19 @@
+@import time
+
+$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-rwc.simics")
+$n_cores = 1
+$workload = "spec_cpu"
+$spec_cpu_benchmark = "fprate"
+$perf_profile = "fast"
+
+$log_dir = (resolve-file "%script%")
+$rtc_time = `time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime())`
+$ifwi_build_type = ["release"]
+$real_network = FALSE
+
+$disable_bios_knob_snc = TRUE
+$threading_mode = "serialized"
+$disk_image = "/nfs/site/disks/simcloud_suihaich_002/cluster/os_files/centos-8-stream-embargo-coreserver-202112090026-simicsfs-docker-oneapi.craff"
+
+run-command-file $target
+run-command-file "%script%/../../../../common/workload/s-workloads.simics" 

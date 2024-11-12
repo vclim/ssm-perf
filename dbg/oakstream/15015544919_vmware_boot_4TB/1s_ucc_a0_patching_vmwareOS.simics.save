@@ -1,0 +1,171 @@
+### from /nfs/site/disks/simcloud_chundijx_002/DMR/ww29_pre626 ###
+
+run-command-file "%simics%/targets/oakstream/test_config.simics"
+run-command-file "%simics%/targets/oakstream/topology.include"
+run-command-file "%simics%/targets/oakstream/target_utils.include"
+
+#@set_unified_patch_version()
+#$up_tobe_stitched = "/nfs/site/disks/simcloud_sciv/patches/DMR/"+$unified_patch_version+"/release/UP_DMR_A0_"+$unified_patch_version+"_TPRODSIGNED.inc"
+#$apply_unified_patch = TRUE
+
+$bios="./targets/oakstream/bios/OKSDCRB1.SYS.WR.64.2024.30.3.03.2025.0_0014.D72_DMR_IBLPRE1P0B_X64_Simics_P0.bin"
+
+if not defined core_type    { $core_type    = "pnc"          }
+if not defined soc_config   { $soc_config   = "ucc"          }
+if not defined soc_revision { $soc_revision = "a0"           }
+if not defined board_id     { $board_id     = 0x29           }
+$n_cores = 0x8
+
+#DDR
+#$dimms = $dimms_16
+#$ddr_type = "DDR5"
+#$default_spd_info = "%simics%/targets/oakstream/1RX8_24G_8000_5X8_RDIMM_Samsung.txt"
+#$mem_config = [[0, 0, range 8, 0, $ddr_type, $default_spd_info], [0, 1, range 8, 0, $ddr_type, $default_spd_info]]
+$dimms = [
+     [0, 0,  0, "DDR5", "/nfs/site/disks/simcloud_suihaich_001/frameworks.simulators.simics.cpu.simicsintegrationengineering/tests/perf/common/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt"],
+     [0, 1,  0, "DDR5", "/nfs/site/disks/simcloud_suihaich_001/frameworks.simulators.simics.cpu.simicsintegrationengineering/tests/perf/common/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt"],
+     [0, 2,  0, "DDR5", "/nfs/site/disks/simcloud_suihaich_001/frameworks.simulators.simics.cpu.simicsintegrationengineering/tests/perf/common/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt"],
+     [0, 3,  0, "DDR5", "/nfs/site/disks/simcloud_suihaich_001/frameworks.simulators.simics.cpu.simicsintegrationengineering/tests/perf/common/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt"],
+     [0, 4,  0, "DDR5", "/nfs/site/disks/simcloud_suihaich_001/frameworks.simulators.simics.cpu.simicsintegrationengineering/tests/perf/common/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt"],
+     [0, 5,  0, "DDR5", "/nfs/site/disks/simcloud_suihaich_001/frameworks.simulators.simics.cpu.simicsintegrationengineering/tests/perf/common/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt"],
+     [0, 6,  0, "DDR5", "/nfs/site/disks/simcloud_suihaich_001/frameworks.simulators.simics.cpu.simicsintegrationengineering/tests/perf/common/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt"],
+     [0, 7,  0, "DDR5", "/nfs/site/disks/simcloud_suihaich_001/frameworks.simulators.simics.cpu.simicsintegrationengineering/tests/perf/common/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt"],
+     [0, 8,  0, "DDR5", "/nfs/site/disks/simcloud_suihaich_001/frameworks.simulators.simics.cpu.simicsintegrationengineering/tests/perf/common/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt"],
+     [0, 9,  0, "DDR5", "/nfs/site/disks/simcloud_suihaich_001/frameworks.simulators.simics.cpu.simicsintegrationengineering/tests/perf/common/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt"],
+     [0, 10, 0, "DDR5", "/nfs/site/disks/simcloud_suihaich_001/frameworks.simulators.simics.cpu.simicsintegrationengineering/tests/perf/common/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt"],
+     [0, 11, 0, "DDR5", "/nfs/site/disks/simcloud_suihaich_001/frameworks.simulators.simics.cpu.simicsintegrationengineering/tests/perf/common/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt"],
+     [0, 12, 0, "DDR5", "/nfs/site/disks/simcloud_suihaich_001/frameworks.simulators.simics.cpu.simicsintegrationengineering/tests/perf/common/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt"],
+     [0, 13, 0, "DDR5", "/nfs/site/disks/simcloud_suihaich_001/frameworks.simulators.simics.cpu.simicsintegrationengineering/tests/perf/common/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt"],
+     [0, 14, 0, "DDR5", "/nfs/site/disks/simcloud_suihaich_001/frameworks.simulators.simics.cpu.simicsintegrationengineering/tests/perf/common/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt"],
+     [0, 15, 0, "DDR5", "/nfs/site/disks/simcloud_suihaich_001/frameworks.simulators.simics.cpu.simicsintegrationengineering/tests/perf/common/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt"]
+    ]  
+
+#WA for HSD: 15015630585
+run-command-file "%simics%/targets/oakstream/compatibility_params.include"
+
+#PATCHING variables
+#$os_type = uefi
+$fmod = "s3m"
+$runtime_patching_enable = TRUE
+$s3m_preload_rt_images = FALSE
+$s3m_test_param_overrides = "%simics%/targets/oakstream/patching/configure-bypass-straps.include"
+
+$txt_enable = TRUE
+$boot_guard_enable = TRUE
+#TPM script
+$tpm_enable = TRUE
+$tpm_location = 1
+$tpm_version = "2.0"
+
+$usb_disk1_enable = TRUE
+$usb_disk1_image ="/nfs/site/disks/simcloud_chundijx_002/UDISK/ACM.vhd"
+$disk_image = "/nfs/site/disks/simcloud_ashanx_002/narrow_down/UDISK/ESXi_DMR_with_Magic_Ins_11.craff"
+
+#SCIV team override below variables in Test Case if needed, but if You would like to use s3m+ese, s3m+imhpunit, s3m+oobmsm please see below comments
+
+#if plan to patch $fmod = "s3m+ese" - no need to add any variables to this script
+
+#if plan to patch $fmod = "s3m+imhpunit" - need to uncomment below lines
+#$imh_punit_start_from_runtime = FALSE
+#$imh_punit_runtime_image=""
+
+#if plan to patch $fmod = "s3m+oobmsm" - need to uncomment below lines
+#$runtime_patching_enable= "TRUE"
+#$is_patching_enable= TRUE
+#$use_dummy_patching= FALSE
+#$is_patching_by="s3m"
+
+$enable_i82599_real_network = TRUE
+run-command-file "%simics%/targets/oakstream/oakstream.simics"
+
+$sn =service_node_cmp0.sn
+$ip_address=$sn.get-ip-address-from-pool
+oakstream.mb.mcp0.cbb_die0.tile0.module0.core[0][0]->cpuid_number_sets_l3_override =0x4fff
+#$bios_knobs="biosserial"
+
+set-image-memory-limit (100*1024) swapdir ="/tmp/"
+#@import sys
+#@import os 
+#@sys.path.append("/nfs/site/disks/simcloud_suihaich_001/frameworks.simulators.simics.cpu.simicsintegrationengineering/tests/perf/common")
+#@import simics_utils
+#@primary_core = "oakstream.mb.mcp0.cbb_die0.tile0.module0.core[0][0]"
+#@simics_utils.set_processors_attr("use_halt_steps", False)
+
+#run-command-file "%simics%/targets/oakstream/Vmware.simics"
+#run-command-file "%simics%/targets/oakstream/Vmware.simics"
+script-branch {
+        wait-for-simulation-started
+        #@zero = simics_utils.SimPoint(primary_core)
+    
+         $system.serconsole.con.wait-for-string "Press [F2]"
+        echo "Auto-pressing F2 to enter setup!"
+        $system.console.con.input -e "F2"
+       $system.serconsole.con.wait-for-string "Boot Mana"
+        $system.console.con.input -e "Down"
+        $system.console.con.input -e "Enter"
+        $system.serconsole.con.wait-for-string "UEFI Internal Shell"
+       # $system.console.con.input -e "Up"
+        $system.console.con.input -e "Enter"
+        $system.serconsole.con.wait-for-string "Shell>"
+        $system.console.con.input "fs3:\n"
+        $system.console.con.input "cd TPM\n"
+        $system.console.con.input "cd Tpm2ProvTools-CBnT_new\n"
+        $system.console.con.input "ResetPlatformAuth.nsh SHA256 EXAMPLE\n" 
+        $system.console.con.input "Tpm2_CBnt_Prov.nsh SHA256 EXAMPLE\n"
+        $system.serconsole.con.wait-for-string "Provisioning Completed Successfully" 
+        $system.console.con.input "Tpm2PoProv.nsh SHA256 EXAMPLE\n" 
+        $system.serconsole.con.wait-for-string "Provisioning Completed Successfully" 
+        $system.console.con.input "cd ..\n"
+        $system.console.con.input "cd XML\n"
+        $system.console.con.input "XmlCliKnobs.efi AP -f EnableTXT.cfg\n"   
+		$system.serconsole.con.wait-for-string "Verify Passed"			
+        $system.console.con.input "reset\n"
+        $system.serconsole.con.wait-for-string "Shell>"
+        $system.console.con.input "fs3:\n"
+		$system.console.con.input "cd TPM\n"
+		$system.console.con.input "cd XML\n"
+        $system.console.con.input "XmlCliKnobs.efi RO -f EnableTXT.cfg\n"    
+        $system.serconsole.con.wait-for-string "Verify Passed"	
+		$system.console.con.input "exit\n"   
+        $system.serconsole.con.wait-for-string "Boot Mana"
+        $system.console.con.input -e "Down"
+        $system.console.con.input -e "Enter"
+        $system.serconsole.con.wait-for-string "UEFI Internal Shell"
+		$system.console.con.input -e "Down"
+		$system.console.con.input -e "Down"
+		$system.serconsole.con.wait-for-string "UEFI 1"
+		$system.console.con.input -e "Enter"
+		
+		#$system.serconsole.con.wait-for-string "V03058001 I0"
+        #oakstream.usb3_keyboard.usb_device.key-press SHIFT_L O
+		#$system.console.con.input " tscSyncSkip=TRUE tscSpeedMayVary=TRUE"
+		#$system.console.con.input -e "Enter"    
+        bp.gfx.wait-for $system.console.con "/nfs/site/disks/simcloud_suihaich_001/frameworks.simulators.simics.cpu.simicsintegrationengineering/tests/perf/common/loading-vmware-hypervisor-edit.gfx" interval=1
+        $system.console.con.input "O"  # Shift+O
+        wait-for-global-time 2 -relative
+        $system.console.con.input " tscSyncSkip=TRUE tscSpeedMayVary=TRUE gdbPort=none logPort=none tty1Port=com1 checkPages=FALSE poisonPagePool=FALSE\n"        
+		
+		
+		#@simics_utils.SimPoint(primary_core).print_delta(zero, "SETUP")
+		#@simics_utils.print_vmp_stats() # note that we cannot clear vmp stats
+        #clear-vmp-disabled-reasons-stats
+        #clear-io-stats
+        #@start = simics_utils.SimPoint(primary_core)
+        #new-probe-monitor sampling-mode = virtual interval = 1 clock = `primary_core` -print-no-samples -summary
+        #pm0.add-probe host.memory.used mode = current
+        
+		
+		#$system.console.con.wait-for-gfx-break vmware_booted_2.brk interval = 1
+		bp.console_string.wait-for $system.serconsole.con ("ESXi 8.0.2 http://www.vmware.com")
+        stop
+        #@simics_utils.SimPoint(primary_core).print_delta(start, "ROI")
+        #print-vmp-disabled-reasons-stats
+        #@simics_utils.print_vmp_stats(True)
+        #set-image-memory-limit
+        #print-image-memory-stats
+        #pipe "pm0.print-table max = 0" ("cat > " + $log_dir + "/host_mem_usage.txt")
+        #pm0.summary
+        
+}
+
+#continue

@@ -1,0 +1,21 @@
+# test random failure, use perf stat -B -r 10 -- ... to run it 10 times
+
+
+load-target oakstream/1_socket_ucc-aunit-bmc-cbbpunit-ese-imhpunit-oobmsm-pfrprot-s3m os_type=uefi ifwi_build_type=["release"] log_dir=/tmp
+@import os
+@import datetime
+script-branch {
+    wait-for-global-time 100
+    ptime -all
+    # save logs
+    @os.system(f'cp /tmp/oakstream.simics.log ./1s_allfmods_uefi.simics.log.timeout.{datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}') 
+    stop
+}
+script-branch {
+    bp.console_string.wait-for oakstream.serconsole.con "UEFI Internal Shell"
+    ptime -all
+    # save logs
+    @os.system(f'cp /tmp/oakstream.simics.log ./1s_allfmods_uefi.simics.log.pass.{datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}') 
+    stop
+}    
+run

@@ -1,0 +1,18 @@
+$log_dir = (resolve-file "%script%")
+$target = "oakstream/1_socket_ucc-generic"
+
+@cmd = [
+    f'load-target {simenv.target}', f'log_dir={simenv.log_dir}',
+    'os_type=centos_stream_9', 'ifwi_build_type=["release"]',
+    'threading_mode=serialized', 'perf_profile="fast,direct_rdtsc"',
+    #'use_fast_caching=TRUE',
+    #'full_mem_decode=FALSE',
+    f'presets=[["{simenv.log_dir}/../../../../common/dimms_1s_1x32GB.preset.yml",""],["{simenv.log_dir}/../../../../common/knobs_disable_magic_rowhammer.preset.yml",""]]',
+    #'n_cores=4', # got kernel panic on  6.7.2.1.2 image, no panic on 6.9.3.6.5 image but doesn't improve performance
+    #'disk_image="/nfs/site/disks/simcloud_suihaich_002/collateral/dmr/dmr-bkc-centos-stream-9-coreserver-6.9-3.6-5.craff"',
+]
+
+@print(' '.join(cmd))
+@run_command(' '.join(cmd))
+
+run-command-file "%script%/../../../../common/boot_profiling.include" 

@@ -1,0 +1,22 @@
+if not defined con { $con = $system.serconsole.con }
+
+bp.console_string.wait-then-write $con "# " "sleep 20 \n"
+bp.console_string.wait-then-write $con "# " "mkdir gnr-binaries \n"
+bp.console_string.wait-then-write $con "# " "cd gnr-binaries \n"
+bp.console_string.wait-then-write $con "# " "wget http://marceline.zpn.intel.com/gnr_tests/amxfp16-dpfp16ps \n"
+bp.console_string.wait-then-write $con "# " "wget http://marceline.zpn.intel.com/tmul_tests_static/amxint8-dpbssd \n"
+bp.console_string.wait-then-write $con "# " "wget http://marceline.zpn.intel.com/tmul_tests_static/amxint8-dpbsud \n"
+bp.console_string.wait-then-write $con "# " "wget http://marceline.zpn.intel.com/tmul_tests_static/amxint8-dpbusd \n"
+bp.console_string.wait-then-write $con "# " "wget http://marceline.zpn.intel.com/tmul_tests_static/amxint8-dpbuud \n"
+bp.console_string.wait-then-write $con "# " "wget http://marceline.zpn.intel.com/tmul_tests_static/amxtile-2 \n"
+bp.console_string.wait-then-write $con "# " "wget http://marceline.zpn.intel.com/tmul_tests_static/bf16_dpbf16p \n"
+bp.console_string.wait-then-write $con "# " "wget http://marceline.zpn.intel.com/tmul_tests_static/mamx_basic \n"
+bp.console_string.wait-then-write $con "# " "wget http://marceline.zpn.intel.com/tmul_tests-icc/amxint8-dpbssd-icc \n"
+bp.console_string.wait-then-write $con "# " "chmod +x * \n"
+bp.console_string.wait-then-write $con "# " "result=0 \n"
+# skip amxfp16-dpfp16ps due to https://hsdes.intel.com/appstore/article/#/14016385203
+bp.console_string.wait-then-write $con "# " "rm -f amxfp16-dpfp16ps \n"
+$wl_run_cmd = "for i in $(ls .); do echo RUNNING-$i ; ./$i ; ((result+=$?)) ; done ; if test $result -eq 0; then echo PASS::$result ; fi \n"
+$wl_wait_string = "PASS::0"
+
+

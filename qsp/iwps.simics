@@ -1,0 +1,19 @@
+# Attach IWPS in fast-forward mode
+run-command-file targets/iwps/attach-iwps.simics iwps_cfg = skx extra_cmd = "--roi-script --no-cache-warming"
+
+# Fast-forward for 1M instructions
+continue 1000000
+
+# Cache warming for 1M instructions
+sift_tracing0->mode = "cache-only"
+continue 1000000
+
+# Enter ROI and simulate in performance mode for 100M instructions
+sift_tracing0->mode = "detailed"
+continue 100000000
+
+# End the simulation
+sift_tracing0.info
+sift_tracing0.status
+sift_tracing0.delete
+

@@ -1,0 +1,101 @@
+$simenv_params=TRUE
+
+#############################################################
+if not defined disk_image { $disk_image = "/nfs/site/disks/simcloud_akumarr_001/projects/dmr-6.0/OS_Image/Windows.26212.Server.HvOn.vhdx" }
+
+#default value is UEFI
+#$os_type="uefi"
+
+#if You would like to attach disk_image for other OS please change $os_type:
+#for svos:
+#$os_type="svos"
+
+#for centos:
+#$os_type="centos_stream"
+
+#for Windows:
+$os_type = "win_vnext"
+#$os_version = 25951
+#set-image-memory-limit 30000
+#if You plan to use Windows, You need to use WA: set-image-memory-limit 30000
+#in other way VNC could be killed because of lack of memory
+#############################################################
+
+$bmc_fw="/nfs/site/disks/simcloud_akumarr_001/projects/dmr-6.0/BMC/OBMC-oks-2024.24.0-gcd008b-ab31aaf-pfr-full.ROM"
+
+$bios="/nfs/site/disks/simcloud_akumarr_001/projects/dmr-6.0/IFWI_Image/OKSDCRB1.SYS.WR.64.2024.24.2.01.0257.1_0013.D38_DMR_X64_IP_Clean_Internal_Simics.bin"
+
+$fmod="s3m,imhpunit,cbbpunit"
+$cstate_enable=TRUE
+$bios_knobs = "test"
+$bios_knobs_string = "PackageCState=0x7,AcpiC2Enumeration=0x0,AcpiC3Enumeration=0x3"
+
+#$oobmsm_step_rate= "1/1"
+$enable_wa_hw_patching = TRUE
+$time_quantum = 5e-05
+
+#S3M 3.0 FW
+#$sw_config = s3m_fw
+#$sw_version = "3.0.4.0212"
+
+# Log files
+if not defined trid {$trid = "0"}
+@simenv.local_time = time.strftime("%Y%m%d_%H%M%S", time.localtime())
+#if not defined log_path         { $log_path      = "logs-ap" }
+#if not defined log_name         { $log_name      = "%Win-oks-ap"}
+#if not defined log_file         { $log_file      = "%s/%s-%s-cli.log"  % [$log_path, $log_name, $local_time] }
+#if not defined uart_log_file    { $uart_log_file = "%s/%s-%s-uart.log" % [$log_path, $log_name, $local_time] }
+#if not defined sim_log_file 	{ $sim_log_file = "%s/%s-%s-simics.log" % [$log_path, $log_name, $local_time] } 
+#@if not os.path.exists(simenv.log_path):
+#    os.makedirs(simenv.log_path)
+	
+$SW_config = s3m_fw
+$sw_version = "3.0.4.0212"
+if not defined dhcp_pool_size                       { $dhcp_pool_size = 50                    }
+if not defined service_node_ip_address              { $service_node_ip_address = "10.10.0.1"  }
+if not defined dhcp_pool_ip                         { $dhcp_pool_ip = "10.10.0.100"           }
+ 
+$i82599_present = TRUE
+$create_network = TRUE
+$enable_i82599_real_network = TRUE
+$real_network=TRUE
+$i210_present = FALSE
+$enable_i210_real_network = FALSE
+
+#Added S3M WAs because 0189 version is not listed here https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/vp-release/6.0/dmr/SWCI/s3m_fw/
+
+$s3m_bootstrap_file="/nfs/site/disks/simcloud_sciv/workspace_auto/s3m/3.0.4.0212/Internal/FW/Debug/bootstrap/bootmain"
+$s3m_fw_trace_dictionary="/nfs/site/disks/simcloud_sciv/workspace_auto/s3m/3.0.4.0212/Internal/FW/Trace/trace_dictionary.xml"
+$s3m_npk_decode_xml="/nfs/site/disks/simcloud_sciv/workspace_auto/s3m/3.0.4.0212/Internal/FW/Trace/S3M_Internal.xml"
+$s3m_fmc_file="/nfs/site/disks/simcloud_sciv/workspace_auto/s3m/3.0.4.0212/External/FW/Image/runtime/fmcmain.bin"
+$s3m_vpm_file="/nfs/site/disks/simcloud_sciv/workspace_auto/s3m/3.0.4.0212/External/FW/Image/runtime/vpmmain.bin"
+$s3m_secure_rt_file="/nfs/site/disks/simcloud_sciv/workspace_auto/s3m/3.0.4.0212/External/FW/Image/runtime/rtmain.bin"
+$s3m_normal_rt_file="/nfs/site/disks/simcloud_sciv/workspace_auto/s3m/3.0.4.0212/External/FW/Image/runtime/n_rtmain.bin"
+$s3m_arc_tcf_file="/nfs/site/disks/simcloud_sciv/workspace/s3m/24ww14.5_s3m_bin_turnin5637/arc.tcf"
+$spi_cpld_image_file="/nfs/site/disks/simcloud_sciv/workspace/s3m/24ww14.5_s3m_bin_turnin5637/gnr/c0/prod/nvram/standalone/altera_onchip_flash.bin"
+$spi_cpld_image_file="/nfs/site/disks/simcloud_sciv/workspace/s3m/24ww14.5_s3m_bin_turnin5637/gnr/c0/prod/nvram/ic/altera_onchip_flash.bin"
+$fuse_pull_data="/nfs/site/disks/simcloud_sciv/workspace/s3m/24ww14.5_s3m_bin_turnin5637/fuse_data_3_259.bin"
+$spi_flash_image_file="/nfs/site/disks/simcloud_sciv/workspace/s3m/24ww14.5_s3m_bin_turnin5637/gnr/c0/prod/flash/full_flash_image.bin"
+$s3m_preload_dram_file="/nfs/site/disks/simcloud_sciv/workspace/s3m/24ww14.5_s3m_bin_turnin5637/nvram_preload_data_ecc.bin"
+#$rtc_sram_image="/nfs/site/disks/simcloud_huylex_001/projects/dmr-6.0/Ingredients/S3M/24ww14.5_s3m_bin_turnin5637/sram128b.bin"
+
+#imhpcode fmod variables - see oakstream-extension/fmod/imh-punit/imh-punit-fmod.json
+
+#oobmsm fmod variables - see also oakstream-extension/fmod/oobmsm/oakstream-oobmsm-fmod.json"
+$ltm_l2p_file="/nfs/site/disks/simcloud_sciv/workspace_auto/ocode/A0_UV4_main_OOBMSM/3.0.0.580/OOBMSM/simics/ltm/DMR.log2phy.bin"
+$ltm_imh0="/nfs/site/disks/simcloud_sciv/workspace_auto/ocode/A0_UV4_main_OOBMSM/3.0.0.580/OOBMSM/simics/ltm/DMR_full_imh0.bin"
+$ltm_imh1="/nfs/site/disks/simcloud_sciv/workspace_auto/ocode/A0_UV4_main_OOBMSM/3.0.0.580/OOBMSM/simics/ltm/DMR_full_imh1.bin"
+$agg_ltm_l2p_file="/nfs/site/disks/simcloud_sciv/workspace_auto/ocode/A0_UV4_main_OOBMSM/3.0.0.580/MSM_AGG/simics/ltm/DMR.log2phy.bin"
+$agg_ltm_imh0="/nfs/site/disks/simcloud_sciv/workspace_auto/ocode/A0_UV4_main_OOBMSM/3.0.0.580/MSM_AGG/simics/ltm/DMR_agg_imh0.bin"
+$agg_ltm_imh1="/nfs/site/disks/simcloud_sciv/workspace_auto/ocode/A0_UV4_main_OOBMSM/3.0.0.580/MSM_AGG/simics/ltm/DMR_agg_imh1.bin"
+
+
+#ese fmod variables - see oakstream-extension/fmod/ese/ese-fmod.json
+#$ese_gsk_fuses_lo =  0x80030002
+
+#cbbpunit fmod variables - see oakstream-extension/fmod/cbb-punit/cbb-punit-fmod.json
+
+if not defined full_mem_decode   { $full_mem_decode   = TRUE          }
+if not defined mrc_mem_flows_lo   { $mrc_mem_flows_lo   = 0x80209a5002064d00          }
+if not defined mrc_mem_flows_hi   { $mrc_mem_flows_hi   = 0x0          }
+if not defined mrc_mem_flows_ext   { $mrc_mem_flows_ext   = 0x6000e          }

@@ -1,0 +1,19 @@
+workload:
+  kind: stages
+  simics_config:
+    checkpoint_path: /nfs/site/disks/simcloud_suihaich_001/personal.suihaich.simics-work.regression/nova/booted_cl_skx_4c1t.ckpt
+    server_config:
+      target_name: board  # name of the node to trace
+      console_prompt: simics@cl-qsp
+  application:
+    type: subprocess
+    # after the checkpoint is loaded this command is entered into the console
+    command: openssl
+    args: speed -multi 4 md5
+    simics_upload_files: false  # don't treat openssl as an executable that should be uploaded to the simics machine
+  roi:
+    type: simics_breakpoint
+    # after the command starts, wait until 3 lines are printed to the console and then start the ROI
+    start_bp: bp.console_string.wait-for object = board.serconsole.con string = "(.*?\n){3}" -regexp
+    # run the simulation until the frontend core simulates 30M steps
+    end_bp: bp.step.wait-for step = 30_000_000

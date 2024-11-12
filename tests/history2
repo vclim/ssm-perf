@@ -1,0 +1,116 @@
+Port files in https://github.com/intel-sandbox/personal.suihaich.simics-tests.git into personal.suihaich.simics-work.git,
+so the files in common/ folder can be reused easily
+
+commit 4638d4719b72860e22e5a3bc10a7d2bb9e32381b
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Wed Aug 28 18:39:09 2024 -0700
+
+    Change wait-for-control-register to python implementation
+
+commit ac54d5195c3e26c8f59e118c6313e827ed7fbec2
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Wed Aug 28 15:26:33 2024 -0700
+
+    Don't disable rowhammer for allfmod max core bios boot test
+
+commit d5e544776b7ceb1a2aeb775cd253d2da930a025c
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Wed Aug 28 15:04:27 2024 -0700
+
+    Fix 1s_ucc_bmods_4TB_esxi
+
+commit fbe44f6936121e932973c399526c3587410e00a5
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Wed Aug 28 14:14:49 2024 -0700
+
+    Add preset file for bios knobs
+
+commit 0868faeed5abf52521da86d132ebbd7d4dfcb0e2
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Tue Aug 27 08:06:49 2024 -0700
+
+    Fix variable
+
+commit 5292e0b3037cf8fc1fdce211064d1f314e4f080d
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Sat Aug 24 10:30:41 2024 -0700
+
+    Use subsystem multithreading for bmc profiling
+
+commit ba5efd1d22b7e2527dd4daa8658373a995231758
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Sat Aug 24 08:55:28 2024 -0700
+
+    Fix timeout limit
+
+commit 9ff98f6b4e77145123a6b57d66330be2b686297e
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Fri Aug 23 20:33:51 2024 -0700
+
+    Add scripts for profiling bmc fmod
+
+commit 9505670d2e7925969431f81d77b4258dbbbf0a28
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Fri Aug 23 20:33:06 2024 -0700
+
+    Move to ww34.3 (pre658), need to apply knob to disable magic rowhammer (without affecting knob to skip s3m access in allfmods)
+
+commit a71dc6a7fe3af9592efa8cd8f178d90987bfe824
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Wed Aug 21 19:24:40 2024 -0700
+
+    Better implementation of clearing ia32_vmx_procbased_ctls2[62]
+
+commit 2e7f68302af22e05ea680aab65ccd3c8ebe6ddb1
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Mon Aug 19 13:57:13 2024 -0700
+
+    Modify windows tests
+
+commit 418965f43de63227c7f8f188de4b245509f6db52
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Wed Aug 14 20:20:00 2024 -0700
+
+    ww33.3 regression
+
+commit 19a5b322980fc7b21f7d4b0d652c58a3146317c2
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Wed Aug 14 09:12:29 2024 -0700
+
+    Improve utility functions
+
+commit 7d03addd79da689eb39fde844e0f2dc3d7f79f79
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Mon Aug 12 18:30:41 2024 -0700
+
+    Add allfmods windows boot test
+
+commit 6cc4e3e59ee879dddb1be936296a08ecaf266768
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Mon Aug 12 10:35:43 2024 -0700
+
+    Add windows boot test
+
+commit b0d9a41dae73a558066577f3b89de263aaf65e88
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Thu Aug 8 13:41:09 2024 -0700
+
+    ww32.3 (pre644)
+
+commit 1641922e17fb564e85cf26642b114a1c9931cc99
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Fri Aug 2 19:54:26 2024 -0700
+
+    remove unnecessary level in folders
+
+commit 51a51ab7908fe631c397de136e7b41fbcc5933e1
+Author: Haichang Sui <haichang.sui@intel.com>
+Date:   Fri Aug 2 19:48:12 2024 -0700
+
+    Port files from SIE repo (see README)
+
+commit c9bc16345722968bd2b11749cc794982ea1151cf
+Author: suihaich-intel <haichang.sui@intel.com>
+Date:   Fri Aug 2 21:36:27 2024 -0500
+
+    Initial commit

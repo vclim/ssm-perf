@@ -1,0 +1,72 @@
+# Common include file for configuring and starting the platform with CPM fMod
+
+# Make the binaries in the CPM5_1-SystemC-Components package 7752 the priority.
+# This causes the CPM fMod binaries from the 7752 linux64 directory to be used
+# instead of the possibly obsolete/old binaries in the DMR 8145 linux64 directory.
+try {
+    set-prioritized-package "CPM5_1-SystemC-Components"
+} except {
+    echo "CPM5_1-SystemC-Components not installed"
+}
+
+# These settings yield better performance
+if not defined soc_config           { $soc_config = "lcc" }
+if not defined ifwi_build_type      { $ifwi_build_type = ["release"] }
+
+# Instantiate the model
+# Default use fMod for CPM only, if use fMod for both CPM and S3M, please add $fmod="cpm+s3m" to the top of the bootup script...
+if not defined fmod                 { $fmod = "cpm"}
+
+# CPM fMod profile presets, the config file does not need to be set, and will be configured for CPM5.2 release
+if not defined auth_fw_rom          { $auth_fw_rom = "cpm51_dualSign.rom" }
+
+# Dynamically fetch files from the Simics home
+$cpm_fmod_auth_fw_rom = (lookup-file "%simics%/targets/oakstream/Firmware/" + $auth_fw_rom)
+
+# Default load lcc yaml
+(load-target
+  fmod = $fmod
+  disk_image = "/nfs/site/disks/simcloud_suihaich_002/collateral/dmr/win_26100_hsd_18039522638.vhdx"
+  cpm_fmod_params:cpm_rom_image = $cpm_fmod_auth_fw_rom
+  soc_config = $soc_config
+  ifwi_build_type = $ifwi_build_type
+  networking:real_network = $real_network
+  target = "oakstream/1_socket_lcc-generic"
+  presets = [["presets_memory/cfg3_1R_x8_32Gb_32GB_RDIMM_DDR5_8000",""]]
+  perf_profile = "fast,bus_lock,split_lock" 
+  n_cores = 4
+)
+
+# Temporarily add bar address mapping, wait for cpm_wa.py to be added and then delete
+@conf.oakstream.mb.mcp0.imh_die0.cpm.cpm_sc_device_0.mem_space = conf.oakstream.mb.mcp0.imh_die0.pci_bus_hiop[3].mem_space
+@conf.oakstream.mb.mcp0.imh_die0.cpm.cpm_sc_device_0.self_device = conf.oakstream.mb.mcp0.imh_die0.cpm.cpm_sc_device_0
+# Updated for s3m
+oakstream.mb.mcp0.imh_die0.pci_bus_hiop[3].mem_space.del-map device = oakstream.mb.mcp0.imh_die0.cpm.cpm_sc_device_0 function = 510
+
+# This turns off the annoying SystemC scheduling messages which appear massively if logging is turned up to level 4
+oakstream.mb.mcp0.imh_die0.cpm.cpm_sc_device_0.log-group -disable Scheduling
+oakstream.mb.mcp0.imh_die0.cpm.cpm_sc_device_0.log-group -disable Awareness
+
+### THE BELOW MAY NOT BE NEEDED ANY MORE - NEED TO TEST WORKBENCH DEBUGGING
+
+# attempt to connect Workbench in real host mode
+###if ($enable_workbench == TRUE) {
+###    try {
+###        echo "Using i82599 adapter for network"
+###        load-module i82599
+###        load-module i82599_comp
+###
+###        local $mac_list = ["10:10:10:10:10:11", "10:10:10:10:10:22"]
+###        local $eth_gbe = (create-i82599-comp name = oakstream.mb.i82599 mac_list = $mac_list)
+###        connect $eth_gbe.pci_bus oakstream.mb.mcp0.imh_die0.pcieGen4_slot_0e
+###
+###        local $workbench = (create-ethernet-switch name = workbench_switch)
+###        connect ($workbench.get-free-connector) $eth_gbe.eth_slot0
+###        instantiate-components
+###
+###    } except {
+###        echo "error: " + (get-error-message)
+###        echo "error command: " + (get-error-command)
+###        echo "error in line: " + (get-error-line)
+###    }
+###}

@@ -1,0 +1,238 @@
+diff --git a/common/workload/branch_workloads.include b/common/workload/branch_workloads.include
+index db07e62..f049281 100755
+--- a/common/workload/branch_workloads.include
++++ b/common/workload/branch_workloads.include
+@@ -9,6 +9,11 @@ script-branch {
+     bp.console_string.wait-then-write $con "# " "usermod -aG docker root \n"          
+     # enable and start docker
+     bp.console_string.wait-then-write $con "# " "systemctl enable --now docker \n"
++    
++    # offline additional cores for CWF
++    bp.console_string.wait-then-write $con "# " "echo 0 > /sys/devices/system/cpu/cpu1/online\n"
++    bp.console_string.wait-then-write $con "# " "echo 0 > /sys/devices/system/cpu/cpu2/online\n"
++    bp.console_string.wait-then-write $con "# " "echo 0 > /sys/devices/system/cpu/cpu3/online\n"
+ 
+     # WL specific setup
+     if $workload=="dummy" { 
+@@ -34,6 +39,7 @@ script-branch {
+     if defined wl_run_cmd_override          { $wl_run_cmd = $wl_run_cmd_override }
+     if $enable_perf_for_workload            { $wl_run_cmd = ("perf stat -B " +  $wl_run_cmd) }
+     if $enable_lit_trace                    { lit-recorder-start $log_dump -ih } 
++    if $enable_instrumentation              { new-instruction-histogram -connect-all }
+     bp.console_string.wait-then-write $con "# " ( $wl_run_cmd )
+ 
+     # WL completion
+diff --git a/tests/birchstream/workload/dsb_socialnetwork/test.simics b/tests/birchstream/workload/dsb_socialnetwork/test.simics
+index 905cc4e..895b2e9 100755
+--- a/tests/birchstream/workload/dsb_socialnetwork/test.simics
++++ b/tests/birchstream/workload/dsb_socialnetwork/test.simics
+@@ -1,7 +1,7 @@
+ @import time
+ 
+-$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-rwc.simics")
+-$n_cores = 1
++$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-dkt.simics")
++$soc_config = "ic"
+ $workload = "dsb_socialnetwork"
+ $perf_profile = "fast,rdtsc_no_stall"
+ 
+@@ -12,7 +12,7 @@ $real_network = FALSE
+ 
+ $disable_bios_knob_snc = TRUE
+ $threading_mode = "serialized"
+-$disk_image = "/nfs/site/disks/ssg_stc_simics_workloads/artifactory/simics-repos/ts/images/gnr/centos/centos-8-stream-embargo-coreserver-202204041125-wl-setup.craff"
++$disk_image = "/nfs/site/disks/simcloud_suihaich_002/cluster/os_files/centos-8-stream-embargo-coreserver-202204041125-wl-setup.craff"
+ $disk_image_patch = "https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/images/gnr/centos/centos-8-stream-embargo-coreserver-202204041125-wl-setup-diff-dsb-socialnetwork.craff"
+ $image_pwd = "intel123"
+ 
+diff --git a/tests/birchstream/workload/harbor_benchdnn/test.simics b/tests/birchstream/workload/harbor_benchdnn/test.simics
+index d8c2436..48e9c56 100644
+--- a/tests/birchstream/workload/harbor_benchdnn/test.simics
++++ b/tests/birchstream/workload/harbor_benchdnn/test.simics
+@@ -1,7 +1,7 @@
+ @import time
+ 
+-$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-rwc.simics")
+-$n_cores = 1
++$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-dkt.simics")
++$soc_config = "ic"
+ $workload = "harbor_benchdnn"
+ $perf_profile = "default"
+ 
+diff --git a/tests/birchstream/workload/harbor_benchdnn_fast/test.simics b/tests/birchstream/workload/harbor_benchdnn_fast/test.simics
+index 6188beb..814b911 100644
+--- a/tests/birchstream/workload/harbor_benchdnn_fast/test.simics
++++ b/tests/birchstream/workload/harbor_benchdnn_fast/test.simics
+@@ -1,7 +1,7 @@
+ @import time
+ 
+-$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-rwc.simics")
+-$n_cores = 1
++$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-dkt.simics")
++$soc_config = "ic"
+ $workload = "harbor_benchdnn"
+ $perf_profile = "fast"
+ 
+diff --git a/tests/birchstream/workload/harbor_resnet50/test.simics b/tests/birchstream/workload/harbor_resnet50/test.simics
+index 5eee517..9d4b244 100644
+--- a/tests/birchstream/workload/harbor_resnet50/test.simics
++++ b/tests/birchstream/workload/harbor_resnet50/test.simics
+@@ -1,7 +1,7 @@
+ @import time
+ 
+-$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-rwc.simics")
+-$n_cores = 1
++$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-dkt.simics")
++$soc_config = "ic"
+ $workload = "harbor_resnet50"
+ $perf_profile = "default"
+ 
+diff --git a/tests/birchstream/workload/hpc_minife/test.simics b/tests/birchstream/workload/hpc_minife/test.simics
+index 62f228f..36f31b9 100644
+--- a/tests/birchstream/workload/hpc_minife/test.simics
++++ b/tests/birchstream/workload/hpc_minife/test.simics
+@@ -1,7 +1,7 @@
+ @import time
+ 
+-$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-rwc.simics")
+-$n_cores = 1
++$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-dkt.simics")
++$soc_config = "ic"
+ $workload = "hpc_minife"
+ $perf_profile = "fast,avx512"
+ 
+diff --git a/tests/birchstream/workload/hpc_namd/test.simics b/tests/birchstream/workload/hpc_namd/test.simics
+index a549141..2925a8f 100644
+--- a/tests/birchstream/workload/hpc_namd/test.simics
++++ b/tests/birchstream/workload/hpc_namd/test.simics
+@@ -1,7 +1,7 @@
+ @import time
+ 
+-$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-rwc.simics")
+-$n_cores = 1
++$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-dkt.simics")
++$soc_config = "ic"
+ $workload = "hpc_namd"
+ $perf_profile = "fast,avx512"
+ 
+diff --git a/tests/birchstream/workload/hpc_wrf/test.simics b/tests/birchstream/workload/hpc_wrf/test.simics
+index 12831b2..b29cbcd 100644
+--- a/tests/birchstream/workload/hpc_wrf/test.simics
++++ b/tests/birchstream/workload/hpc_wrf/test.simics
+@@ -1,7 +1,7 @@
+ @import time
+ 
+-$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-rwc.simics")
+-$n_cores = 1
++$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-dkt.simics")
++$soc_config = "ic"
+ $workload = "hpc_wrf"
+ $perf_profile = "fast"
+ 
+diff --git a/tests/birchstream/workload/openresty/test.simics b/tests/birchstream/workload/openresty/test.simics
+index 1950b88..75e3347 100755
+--- a/tests/birchstream/workload/openresty/test.simics
++++ b/tests/birchstream/workload/openresty/test.simics
+@@ -1,7 +1,7 @@
+ @import time
+ 
+-$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-rwc.simics")
+-$n_cores = 1
++$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-dkt.simics")
++$soc_config = "ic"
+ $workload = "openresty"
+ $perf_profile = "fast"
+ 
+@@ -12,7 +12,7 @@ $real_network = TRUE
+ 
+ $disable_bios_knob_snc = TRUE
+ $threading_mode = "serialized"
+-$disk_image = "/nfs/site/disks/ssg_stc_simics_workloads/artifactory/simics-repos/ts/images/gnr/centos/centos-8-stream-embargo-coreserver-202204041125-wl-setup.craff"
++$disk_image = "/nfs/site/disks/simcloud_suihaich_002/cluster/os_files/centos-8-stream-embargo-coreserver-202204041125-wl-setup.craff"
+ $disk_image_patch = "https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/images/gnr/centos/centos-8-stream-embargo-coreserver-202204041125-wl-setup-diff-openresty.craff"
+ $image_pwd = "intel123"
+ 
+diff --git a/tests/birchstream/workload/rhel_nested_vm_boot/test.simics b/tests/birchstream/workload/rhel_nested_vm_boot/test.simics
+index 3b7c0e4..3d0aa29 100755
+--- a/tests/birchstream/workload/rhel_nested_vm_boot/test.simics
++++ b/tests/birchstream/workload/rhel_nested_vm_boot/test.simics
+@@ -1,7 +1,7 @@
+ @import time
+ 
+-$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-rwc.simics")
+-$n_cores = 1
++$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-dkt.simics")
++$soc_config = "ic"
+ $workload = "rhel_nested_vm_boot"
+ $perf_profile = "fast"
+ 
+diff --git a/tests/birchstream/workload/sandstone/test.simics b/tests/birchstream/workload/sandstone/test.simics
+index 9174c09..97efc56 100644
+--- a/tests/birchstream/workload/sandstone/test.simics
++++ b/tests/birchstream/workload/sandstone/test.simics
+@@ -1,7 +1,7 @@
+ @import time
+ 
+-$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-rwc.simics")
+-$n_cores = 1
++$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-dkt.simics")
++$soc_config = "ic"
+ $workload = "sandstone"
+ $perf_profile = "default"
+ 
+diff --git a/tests/birchstream/workload/sandstone_fast/test.simics b/tests/birchstream/workload/sandstone_fast/test.simics
+index 88b0c34..a481e93 100644
+--- a/tests/birchstream/workload/sandstone_fast/test.simics
++++ b/tests/birchstream/workload/sandstone_fast/test.simics
+@@ -1,7 +1,7 @@
+ @import time
+ 
+-$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-rwc.simics")
+-$n_cores = 1
++$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-dkt.simics")
++$soc_config = "ic"
+ $workload = "sandstone"
+ $perf_profile = "fast"
+ 
+diff --git a/tests/birchstream/workload/spec_cpu_fp/test.simics b/tests/birchstream/workload/spec_cpu_fp/test.simics
+index 326a6ef..86e680d 100644
+--- a/tests/birchstream/workload/spec_cpu_fp/test.simics
++++ b/tests/birchstream/workload/spec_cpu_fp/test.simics
+@@ -1,7 +1,7 @@
+ @import time
+ 
+-$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-rwc.simics")
+-$n_cores = 1
++$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-dkt.simics")
++$soc_config = "ic"
+ $workload = "spec_cpu"
+ $spec_cpu_benchmark = "fprate"
+ $perf_profile = "fast"
+diff --git a/tests/birchstream/workload/spec_cpu_int/test.simics b/tests/birchstream/workload/spec_cpu_int/test.simics
+index 6a75544..8098c2c 100644
+--- a/tests/birchstream/workload/spec_cpu_int/test.simics
++++ b/tests/birchstream/workload/spec_cpu_int/test.simics
+@@ -1,7 +1,7 @@
+ @import time
+ 
+-$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-rwc.simics")
+-$n_cores = 1
++$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-dkt.simics")
++$soc_config = "ic"
+ $workload = "spec_cpu"
+ $spec_cpu_benchmark = "intrate"
+ $perf_profile = "fast"
+diff --git a/tests/birchstream/workload/svt_ffmpeg/test.simics b/tests/birchstream/workload/svt_ffmpeg/test.simics
+index eaa6995..f742540 100644
+--- a/tests/birchstream/workload/svt_ffmpeg/test.simics
++++ b/tests/birchstream/workload/svt_ffmpeg/test.simics
+@@ -1,7 +1,7 @@
+ @import time
+ 
+-$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-rwc.simics")
+-$n_cores = 1
++$target = (resolve-file "%simics%/targets/birchstream/birchstream-ap-dkt.simics")
++$soc_config = "ic"
+ $workload = "svt_ffmpeg"
+ $perf_profile = "fast"
+ 

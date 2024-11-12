@@ -1,0 +1,54 @@
+if not defined target { $target = "mrb" }
+run-script ("%simics%/targets/slk-soc/platform-" + $target + ".simics")
+
+@import os
+@def pipe_to_file(cmd, file=("inspect-"+simenv.target+".md"), append=True, skip_after=True):
+    #print(f'DEBUG: pipe "{cmd}" "cat >> {file}"')
+    if append:
+        run_command(f'pipe "{cmd}" "cat >> {file}"')
+    else:
+        run_command(f'pipe "{cmd}" "cat > {file}"')
+    if skip_after:
+        os.system(f'echo "" >> {file}')
+
+@def print_to_file(line, file=("inspect-"+simenv.target+".md"), append=True, skip_after=True):
+    #print(f'DEBUG: echo "{line}" >> {file}')
+    if append:
+        os.system(f'echo "{line}" >> {file}')
+    else:
+        os.system(f'echo "{line}" > {file}')
+    if skip_after:
+        os.system(f'echo "" >> {file}')
+    
+
+@print_to_file('# Simulated Cores', append=False)
+@pipe_to_file('list-processors')
+@pipe_to_file('list-processors-summary')
+@pipe_to_file('ptime -all')
+
+@print_to_file('# Cells and Thread Domains')
+@pipe_to_file('list-thread-domains -a')
+
+@print_to_file('# Time Quantum and Min Latency')
+@pipe_to_file('set-max-time-span')
+
+@print_to_file('# Loaded Images')
+@pipe_to_file('list-persistent-images')
+
+@print_to_file('# Packages')
+@pipe_to_file('version')
+
+@print_to_file('# Ethernet Switch for Data')
+@pipe_to_file('ethernet_switch_data.status')
+
+@print_to_file('# Ethernet Switch for Management')
+try {
+    @pipe_to_file('ethernet_switch_mgmt.status')
+} except {
+    @print_to_file('Cannot get status for ethernet_switch_mgmt')
+}
+
+@print_to_file('# Model Structure')
+@pipe_to_file('list-objects -a -tree')
+
+#quit

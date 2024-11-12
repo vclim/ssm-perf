@@ -1,0 +1,141 @@
+if not defined con                      { $con = $system.serconsole.con }
+
+if not defined spec_cpu_size            { $spec_cpu_size = "ref" }
+if not defined spec_cpu_cores           { $spec_cpu_cores = 1 }
+if not defined spec_cpu_tune            { $spec_cpu_tune = "base" }
+if not defined spec_cpu_output_format   { $spec_cpu_output_format = "csv,txt,screen" }
+if not defined spec_cpu_topo_override   { $spec_cpu_topo_override = "" }
+#if not defined spec_cpu_copies         { $spec_cpu_copies = 1 } # for rate, this should be same as $spec_cpu_cores
+if not defined spec_cpu_iterations      { $spec_cpu_iterations = 1 }
+if not defined spec_cpu_avx             { $spec_cpu_avx = "avx2" }
+if not defined spec_cpu_compiler        { $spec_cpu_compiler = "icc" }
+if not defined spec_cpu_benchmark       { $spec_cpu_benchmark = "intrate" }
+
+@def gen_spec_cpu_2017_cfg( benchmark, avx, compiler ) :
+    if ( benchmark in { 500, 502, 505, 520, 523, 525, 531, 541, 548, 557, "intrate" } ) or ( "intrate" in benchmark if isinstance(benchmark,str) else False ) : 
+        if (compiler=="icc"):
+            return [ "ic2021.1-lin-core-" + avx + "-rate-20201113_revA.cfg" , "int" ]
+        if (compiler=="gcc_O2"):
+            return [ "gcc10.2.0-lin-O2-rate-20201206.cfg" , "int" ]
+        if (compiler=="gcc_O3"):
+            return [ "gcc10.2.0-lin-O3-rate-20201206.cfg" , "int" ]
+        if (compiler=="gcc_Ofast"):
+            return [ "gcc10.2.0-lin-Ofast-rate-20201206.cfg" , "int" ]
+        if (compiler=="gcc_skx"):
+            return [ "gcc10.2.0-lin-skylake-rate-20201206.cfg" , "int" ]
+        if (compiler=="gcc_skx_avx512"):
+            return [ "gcc10.2.0-lin-skylake-avx512-rate-20201206.cfg" , "int" ]
+        if (compiler=="gcc_clx"):
+            return [ "gcc10.2.0-lin-cascadelake-rate-20201206.cfg" , "int" ]
+        if (compiler=="gcc_cpx"):
+            return [ "gcc10.2.0-lin-cooperlake-rate-20201206.cfg" , "int" ]
+        if (compiler=="gcc_icx"):
+            return [ "gcc10.2.0-lin-icelake-server-rate-20201206.cfg" , "int" ]
+    elif ( benchmark in { 503, 507, 508, 510, 511, 519, 521, 526, 527, 538, 544, 549, 554, "fprate" } ) or ( "fprate" in benchmark if isinstance(benchmark,str) else False ) : 
+        if (compiler=="icc"):
+            return [ "ic2021.1-lin-core-" + avx + "-rate-20201113_revA.cfg" , "fp" ]
+        if (compiler=="gcc_O2"):
+            return [ "gcc10.2.0-lin-O2-rate-20201206.cfg" , "fp" ]
+        if (compiler=="gcc_O3"):
+            return [ "gcc10.2.0-lin-O3-rate-20201206.cfg" , "fp" ]
+        if (compiler=="gcc_Ofast"):
+            return [ "gcc10.2.0-lin-Ofast-rate-20201206.cfg" , "fp" ]
+        if (compiler=="gcc_skx"):
+            return [ "gcc10.2.0-lin-skylake-rate-20201206.cfg" , "fp" ]
+        if (compiler=="gcc_skx_avx512"):
+            return [ "gcc10.2.0-lin-skylake-avx512-rate-20201206.cfg" , "fp" ]
+        if (compiler=="gcc_clx"):
+            return [ "gcc10.2.0-lin-cascadelake-rate-20201206.cfg" , "fp" ]
+        if (compiler=="gcc_cpx"):
+            return [ "gcc10.2.0-lin-cooperlake-rate-20201206.cfg" , "fp" ]
+        if (compiler=="gcc_icx"):
+            return [ "gcc10.2.0-lin-icelake-server-rate-20201206.cfg" , "fp" ]
+    elif ( benchmark in { 600, 602, 605, 620, 623, 625, 631, 641, 648, 657, "intspeed" } ) or ( "intspeed" in benchmark if isinstance(benchmark,str) else False ) : 
+        if (compiler=="icc"):
+            return [ "ic2021.1-lin-core-" + avx + "-speed-20201113_revA.cfg" , "int" ]
+        if (compiler=="gcc_O2"):
+            return [ "gcc10.2.0-lin-O2-speed-20201206.cfg" , "int" ]
+        if (compiler=="gcc_O3"):
+            return [ "gcc10.2.0-lin-O2-speed-20201206.cfg" , "int" ]
+        if (compiler=="gcc_Ofast"):
+            return [ "gcc10.2.0-lin-O2-speed-20201206.cfg" , "int" ]
+        if (compiler=="gcc_skx"):
+            return [ "gcc10.2.0-lin-skylake-speed-20201206.cfg" , "int" ]
+        if (compiler=="gcc_skx_avx512"):
+            return [ "gcc10.2.0-lin-skylake-avx512-speed-20201206.cfg" , "int" ]
+        if (compiler=="gcc_clx"):
+            return [ "gcc10.2.0-lin-cascadelake-speed-20201206.cfg" , "int" ]
+        if (compiler=="gcc_cpx"):
+            return [ "gcc10.2.0-lin-cooperlake-speed-20201206.cfg" , "int" ]
+        if (compiler=="gcc_icx"):
+            return [ "gcc10.2.0-lin-icelake-server-speed-20201206.cfg" , "int" ]
+    elif ( benchmark in { 603, 607, 619, 621, 627, 628, 638, 644, 649, 654, "fpspeed" } ) or ( "fpspeed" in benchmark if isinstance(benchmark,str) else False ) : 
+        if (compiler=="icc"):
+            return [ "ic2021.1-lin-core-" + avx + "-speed-20201113_revA.cfg" , "fp" ]
+        if (compiler=="gcc_O2"):
+            return [ "gcc10.2.0-lin-O2-speed-20201206.cfg" , "int" ]
+        if (compiler=="gcc_O3"):
+            return [ "gcc10.2.0-lin-O2-speed-20201206.cfg" , "int" ]
+        if (compiler=="gcc_Ofast"):
+            return [ "gcc10.2.0-lin-O2-speed-20201206.cfg" , "int" ]
+        if (compiler=="gcc_skx"):
+            return [ "gcc10.2.0-lin-skylake-speed-20201206.cfg" , "fp" ]
+        if (compiler=="gcc_skx_avx512"):
+            return [ "gcc10.2.0-lin-skylake-avx512-speed-20201206.cfg" , "fp" ]
+        if (compiler=="gcc_clx"):
+            return [ "gcc10.2.0-lin-cascadelake-speed-20201206.cfg" , "fp" ]
+        if (compiler=="gcc_cpx"):
+            return [ "gcc10.2.0-lin-cooperlake-speed-20201206.cfg" , "fp" ]
+        if (compiler=="gcc_icx"):
+            return [ "gcc10.2.0-lin-icelake-server-speed-20201206.cfg" , "fp" ]
+    else :
+        print("FATAL : the input value (%d) is not a valid benchmark!" % benchmark)
+        return []
+        
+bp.console_string.wait-then-write $con "# " "mkdir cpu2017 \n"
+bp.console_string.wait-then-write $con "# " "cd cpu2017 \n" 
+bp.console_string.wait-then-write $con "# " "xz -dc /host/nfs/site/disks/simcloud_suihaich_002/cluster/wl_files/cpu2017-1.1.5.tar.xz | tar xf - \n"
+bp.console_string.wait-then-write $con "# " "cd bin \n" 
+bp.console_string.wait-then-write $con "# " "xz -dc /host/nfs/site/disks/simcloud_suihaich_002/cluster/wl_files/cpu2017-1.1.5-bin.tar.xz | tar xf - \n"
+bp.console_string.wait-then-write $con "# " "mv TOOLS.sha512 .. \n" 
+bp.console_string.wait-then-write $con "# " "cd .. \n" 
+
+# \\cloudpeca002.fm.intel.com\Infrastructure\Binaries\SPEC.CPU2017.FOR.INTEL (contact: prasad.s.joshi@intel.com)
+if $spec_cpu_compiler=="icc" {
+    bp.console_string.wait-then-write $con "# " "xz -dc /host/nfs/site/disks/simcloud_suihaich_002/cluster/wl_files/FOR-INTEL-cpu2017-1.1.5-ic2021.1-lin-binaries-20201113_revA.tar.xz | tar xf - \n"
+}
+if `"gcc" in simenv.spec_cpu_compiler` {
+    bp.console_string.wait-then-write $con "# " "xz -dc /host/nfs/site/disks/simcloud_suihaich_002/cluster/wl_files/FOR-INTEL-cpu2017-1.1.0-gcc10.2.0-lin-binaries-20210202.tar.xz | tar xf - \n"
+}
+
+bp.console_string.wait-then-write $con "# " "source ./shrc \n"     # there're also cshrc, choose the right one for your linux env
+bp.console_string.wait-then-write $con "# " "chmod +x ./numa-detection.sh \n"
+bp.console_string.wait-then-write $con "# " "./numa-detection.sh \n"
+bp.console_string.wait-then-write $con "# " "ulimit -s unlimited \n"
+bp.console_string.wait-then-write $con "# " "rm -rf topo.txt \n"
+if ($spec_cpu_topo_override=="") {
+    bp.console_string.wait-then-write $con "# " "specperl nhmtopology.pl \n"
+    bp.console_string.wait-then-write $con "# " "b=`cat topo.txt` \n"
+} else {
+    bp.console_string.wait-then-write $con "# " ("b=" + $spec_cpu_topo_override + " \n")
+}
+bp.console_string.wait-then-write $con "# " "echo $b \n"
+
+@[cfg, format] = gen_spec_cpu_2017_cfg(simenv.spec_cpu_benchmark, simenv.spec_cpu_avx, simenv.spec_cpu_compiler)
+$wl_run_cmd = ( "runcpu --nobuild --action validate --noreportable --define default-platform-flags -c " + `cfg` + " --define cores=" + $spec_cpu_cores + " --size " + $spec_cpu_size + " --tune " + $spec_cpu_tune + " -o " + $spec_cpu_output_format + " --iterations " + $spec_cpu_iterations )
+if `"rate" in cfg` {
+    $wl_run_cmd = ( $wl_run_cmd + " --define numcopies=" + $spec_cpu_cores + " --define no-numa --define $b" )
+} else if (`"speed" in cfg`) and (`format=="int"`){
+    $wl_run_cmd = ( $wl_run_cmd + " --define intspeedaffinity" )
+} else { 
+    @print("FATAL : the input value (%d) is not a valid benchmark!" % simenv.spec_cpu_benchmark)
+    $wl_run_cmd = "echo"
+}
+$wl_run_cmd = ( $wl_run_cmd + " " + $spec_cpu_benchmark + " \n")
+
+if $spec_cpu_benchmark == "intrate" {
+    $wl_wait_string = "Success: 1x500.perlbench_r 1x502.gcc_r 1x505.mcf_r 1x520.omnetpp_r 1x523.xalancbmk_r 1x525.x264_r 1x531.deepsjeng_r 1x541.leela_r 1x548.exchange2_r 1x557.xz_r"
+}
+if $spec_cpu_benchmark == "fprate" {
+    $wl_wait_string = "Success: 1x503.bwaves_r 1x507.cactuBSSN_r 1x508.namd_r 1x510.parest_r 1x511.povray_r 1x519.lbm_r 1x521.wrf_r 1x526.blender_r 1x527.cam4_r 1x538.imagick_r 1x544.nab_r 1x549.fotonik3d_r 1x554.roms_r"
+}

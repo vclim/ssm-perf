@@ -1,0 +1,26 @@
+bp.console_string.wait-then-write $con "# " "wget https://openresty.org/package/centos/openresty.repo \n"
+bp.console_string.wait-then-write $con "# " "mv -f openresty.repo /etc/yum.repos.d/ \n"
+bp.console_string.wait-then-write $con "# " "dnf check-update \n"
+bp.console_string.wait-then-write $con "# " "dnf install -y openresty \n"
+bp.console_string.wait-then-write $con "# " "dnf install -y openresty-resty \n"
+bp.console_string.wait-then-write $con "# " "mkdir openresty \n"
+bp.console_string.wait-then-write $con "# " "cd openresty \n"
+bp.console_string.wait-then-write $con "# " "mkdir logs \n"
+bp.console_string.wait-then-write $con "# " "PATH=/usr/local/openresty/nginx/sbin:$PATH \n"
+bp.console_string.wait-then-write $con "# " "export PATH \n"
+bp.console_string.wait-then-write $con "# " "nginx -p ./ -c /host/nfs/site/disks/simcloud_suihaich_002/cluster/os_files/openresty_nginx.conf \n"
+bp.console_string.wait-then-write $con "# " "curl http://localhost:8080/ \n" # expect to see "hello world"
+
+# install http_load
+bp.console_string.wait-then-write $con "# " "git clone https://github.com/AbdallahCoptan/HTTP_LOAD.git \n"
+bp.console_string.wait-then-write $con "# " "cd HTTP_LOAD/ \n"
+bp.console_string.wait-then-write $con "# " "make \n"
+
+# benchmarking
+bp.console_string.wait-then-write $con "# " "echo http://localhost:8080/ > url_file \n"
+bp.console_string.wait-then-write $con "# " "./http_load -p 10 -s 5 url_file  \n"        
+
+$wl_run_cmd = "curl http://localhost:8080/ \n"
+$wl_wait_string = "hello, world"
+
+

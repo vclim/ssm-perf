@@ -1,0 +1,50 @@
+if not defined con { $con = $system.serconsole.con }
+if ($perf_profile=="fast") {
+    $disabled_tests = [ "uncore_power_v1", "exceptions", "syscall", "fastc1" ]
+} else { 
+    $disabled_tests = [ 
+        "aesni_512",
+        "avx512bfloat16_dotprod",
+        "exceptions",
+        "imunch_replay_mini",
+        "isal_crc_ieee",
+        "isal_crc_t10dif",
+        "isal_crc32_gzip",
+        "isal_crc64_ecma182_norm",
+        "isal_crc64_ecma182_refl",
+        "isal_crc64_iso_norm",
+        "isal_crc64_iso_refl",
+        "isal_crc64_jones_norm",
+        "isal_crc64_jones_refl",
+        "uncore_power_v1",
+        "vinsrvextr",
+        "vmx_io_exit",
+        "vmx_vmexit_cpuid",
+        "vmx_vmexit_from_cr8",
+        "vmx_vmexit_invd",
+        "vmx_vmexit_pause",
+        "vmx_vmexit_to_cr8",
+        "vmx_vmexit_to_dr7",
+        "vmx_vmexit_vmcall",
+        "x87mmx_mix",
+        "x87_inc_dec_stp",
+        "x87_trigonometric",
+        "ix87",
+        "x87",
+        "vpshufbitqmb"
+    ]
+}
+
+$tmp = (resolve-url [ "https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/images/srv_common/sandstone-95-sandstone_fullstatic.7z" , "sandstone-95-sandstone_fullstatic/bin/sandstone" ] )
+$tmp = (resolve-file $tmp) # get realpath of the file on host, in case there're symbolic links which do not work in SimicsFS
+$wl_run_cmd = "./sandstone --quick --verbose -o sandstone.log " 
+foreach $t in $disabled_tests {
+    @simenv.wl_run_cmd += (" --disable " + simenv.t)
+}
+@simenv.wl_run_cmd += " \n" ## " ; tail -n 2 sandstone.log \n"
+$wl_wait_string = "exit: pass"
+
+
+bp.console_string.wait-then-write $con "# " ("cp /host/" + $tmp + " ./ \n")
+bp.console_string.wait-then-write $con "# " "chmod +x ./sandstone \n"
+

@@ -1,0 +1,30 @@
+@import os
+@import time
+
+$cwd = (resolve-file "../common/")
+@sys.path.append(simenv.cwd)
+@import simics_utils
+    
+start-command-line-capture profile_instantiation.simics.log -overwrite -timestamp
+
+# following based on targets/slk-soc/platform-supernode.simics
+
+@simics_utils.timeit_simics_cmd('load-module slk-blueprints')
+
+@start = time.time()
+@p = simics_utils.cprofile_simics_cmd('$node = (new-glb-supernode name = node no_bmc = TRUE)')
+@end = time.time()
+@print("PERF (new-glb-supernode): " + str(end-start))
+@simics_utils.timeit_simics_cmd('instantiate-components')
+
+@simics_utils.timeit_simics_cmd('run-script (resolve-file "%simics%/targets/slk-soc/bmc.include")')
+
+@start = time.time()
+ethernet_switch_mgmt.sn.connect-to-link link = ethernet_switch_mgmt ip = "10.10.0.1"
+@for ubb in range(len(conf.node.ubb)):
+    for mrb in range(len(conf.node.ubb[ubb].mrb)):
+        cli.run_command(f"connect \"node.ubb[{ubb}].mrb[{mrb}].slk.eth0\" cnt1 = (ethernet_switch_mgmt.get-free-connector)")
+@end = time.time()
+@print("PERF (connect ethernet): " + str(end-start))
+
+@simics_utils.timeit_simics_cmd('$node.power-on')

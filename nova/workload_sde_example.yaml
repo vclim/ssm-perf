@@ -1,0 +1,5 @@
+workload:
+  application:
+    workdir:  /nfs/site/disks/simcloud_suihaich_001/personal.suihaich.simics-work.regression/nova # The working directory of the application
+    command: ./bytedance_executable  # Executable path (relative to workdir or absolute)
+    args: 1 1  # Command-line arguments for the application

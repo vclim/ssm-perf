@@ -1,0 +1,21 @@
+@import time
+
+$target = (resolve-file "%simics%/targets/oakstream/oakstream.simics")
+$n_cores = 2
+$soc_config = "lcc"
+$workload = "openresty"
+$perf_profile = "fast"
+
+$log_dir = (resolve-file "%script%")
+$rtc_time = `time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime())`
+$ifwi_build_type = ["release"]
+$real_network = TRUE
+
+$disable_bios_knob_snc = TRUE
+$threading_mode = "serialized"
+$disk_image = "/nfs/site/disks/simcloud_suihaich_002/cluster/os_files/centos-8-stream-embargo-coreserver-202204041125-wl-setup.craff"
+$disk_image_patch = "https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/images/gnr/centos/centos-8-stream-embargo-coreserver-202204041125-wl-setup-diff-openresty.craff"
+$image_pwd = "intel123"
+
+run-command-file $target
+run-command-file "%script%/../../../../common/workload/s-workloads.simics" 

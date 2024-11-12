@@ -1,0 +1,19 @@
+@import time
+
+$target = (resolve-file "%simics%/targets/eaglestream/eaglestream.simics")
+$n_cores = 1
+$workload = "rhel_nested_vm_boot"
+$perf_profile = "fast"
+
+$log_dir = (resolve-file "%script%")
+$rtc_time = `time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime())`
+$ifwi_build_type = ["release"]
+$real_network = FALSE
+
+$disable_bios_knob_snc = TRUE
+$threading_mode = "serialized"
+$disk_image = "/nfs/site/disks/ssg_stc_simics_workloads/artifactory/simics-repos/pub/images/srv_common/BKC-EagleStream_RHEL_542.174794-2019WW50_RHEL80-KVM-nested-vm-10G-guest.craff"
+$image_pwd = "password"
+
+run-command-file $target
+run-command-file "%script%/../../../../common/workload/s-workloads.simics" 

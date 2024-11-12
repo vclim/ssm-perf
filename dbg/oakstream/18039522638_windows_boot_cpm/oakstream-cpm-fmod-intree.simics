@@ -1,0 +1,29 @@
+# Add the directory of this script to the Simics search path
+#add-directory "%script%"
+
+# Add the directory where your .craff file is located
+# The below specifies a common_images subdirectory of your workspace directory, which is frequently used
+#add-directory "%script%//..//..//common_images"
+
+# Specify the name of your system disk .craff file
+#if not defined disk_image  { $disk_image = "simics_intree_dmr_release_0_8_2_RC02.craff" }
+
+# Enable support for connecting VP to Simics host system local network
+if not defined real_network         { $real_network = TRUE }
+
+# Change this to TRUE to support Workbench debugging
+if not defined enable_workbench     { $enable_workbench = FALSE }
+
+# Invoke the common script that configures and instantiates the platform with CPM fMod
+run-command-file "%script%/oakstream-cpm-fmod-common.include"
+
+# Keep going if an error is logged
+sim->stop_on_error = FALSE
+
+# To turn up just the CPM device log level to 3 from the default value of 1 (errors only), uncomment the below
+# or put this line into the workspace targets/oakstream version of this script file
+###oakstream.mb.mcp0.imh_die0.cpm.cpm_sc_device_0.log-level 3
+
+# To route log messages to a specific file, uncomment the below or put this line into the
+# workspace targets/oakstream version of this script file
+###log-setup -overwrite test.log

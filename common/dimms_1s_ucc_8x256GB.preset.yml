@@ -1,0 +1,24 @@
+%YAML 1.2
+---
+description:  Memory Configuration with DIMMS on Memory Channels MC0, MC2, MC3, MC5, MC8, MC10, MC11, MC13.
+args:
+  dimms:
+    [
+     [0, 0,  0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt'],
+     #[0, 1,  0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt'],
+     [0, 2,  0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt'],
+     [0, 3,  0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt'],
+     #[0, 4,  0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt'],
+     [0, 5,  0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt'],
+     #[0, 6,  0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt'],
+     #[0, 7,  0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt'],
+     [0, 8,  0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt'],
+     #[0, 9,  0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt'],
+     [0, 10, 0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt'],
+     [0, 11, 0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt'],
+     #[0, 12, 0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt'],
+     [0, 13, 0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt'],
+     #[0, 14, 0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt'],
+     #[0, 15, 0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt']
+    ]     
+...

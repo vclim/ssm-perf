@@ -1,0 +1,57 @@
+#$disk_image = "win_26100_test.craff"
+#add-directory "/simics/common_images"
+
+#$num_cpus = 1
+#$n_cores = 2
+#$perf_profile = "avx512,amx,5lvl_paging"
+#$memory_per_dimm = 8192
+#$create_network = TRUE
+#$i210_present = TRUE
+#$soc_config = lcc
+#$gbe_softwaretrap_wa = TRUE
+#$service_node_ip_address = "192.168.1.1"
+#$dhcp_pool_id = "192.168.1.150"
+#$ifwi_build_type=["release"]
+
+# limit memory to 60GB
+#set-image-memory-limit 60000
+
+# Auto-generated file. Any changes will be overwritten!
+#run-command-file "/simics/CPM51_Silver_2024WW28.2/simics-cpm5_1-systemc-components-6.0.pre29/targets/oakstream/oakstream-cpm-fmod-intree.simics"
+#run-command-file targets/oakstream/oakstream.simics
+#load-target oakstream/1_socket_ucc-generic n_cores=4 ifwi_build_type=["release"] perf_profile="fast,bus_lock,split_lock" threading_mode=serialized presets=[["presets_memory/cfg3_1R_x8_32Gb_32GB_RDIMM_DDR5_8000",""]] disk_image="/nfs/site/disks/simcloud_suihaich_002/collateral/dmr/win_26100_hsd_18039522638.vhdx" 
+run-command-file "%script%/oakstream-cpm-fmod-intree.simics"
+
+# Disable logging
+output-radix 16
+#$visible = FALSE
+log-level 0
+log-type log-type = critical -disable
+log-type log-type = error -disable
+log-type log-type = info  -disable
+log-type log-type = spec-viol -disable
+
+# Disable real-time mode
+#disable-real-time-mode
+
+# RDP port forwarding
+#connect-real-network-port-in ethernet-link=ethernet_switch0 host-port=50024 target-ip=192.168.1.150 target-port=3389 -f
+
+
+
+script-branch { 
+    bp.gfx.wait-for oakstream.console.con  win_26100_hsd_18039522638.brk interval = 1 
+    stop 
+    if defined vtune { vtune0.stop; vtune0.flamegraph svg-output-filename="vtune_cpm_fmod.svg" }
+}
+#oakstream.console.con.hide
+#oakstream.serconsole.con.hide
+
+if defined vtune {
+    @os.environ['PATH'] += ':/nfs/site/disks/central_tools_tree/sles12/flamegraph/FlameGraph/'
+    enable-unsupported-feature feature = vtune-measurement -v
+    new-vtune-measurement vtune-path=/nfs/site/disks/central_tools_tree/sles12/vtune/2022.1.0/bin64
+    vtune0.start
+}
+
+run

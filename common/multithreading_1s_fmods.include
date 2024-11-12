@@ -1,0 +1,114 @@
+@class core_grouping_x86:
+    cls = simics.confclass('core_grouping_x86')
+    @cls.iface.concurrency_group
+    def execution_group(self, group_index):
+        if group_index == 0:
+            return [x for x in SIM_get_all_processors() if x.classname=='x86-panther-cove']
+
+@class core_grouping_s3m:
+    cls = simics.confclass('core_grouping_s3m')
+    @cls.iface.concurrency_group
+    def execution_group(self, group_index):
+        if group_index == 0:
+            return [x for x in SIM_get_all_processors() if x.classname=='arcsem110']
+
+@class core_grouping_msm:
+    cls = simics.confclass('core_grouping_msm')
+    @cls.iface.concurrency_group
+    def execution_group(self, group_index):
+        if group_index == 0:
+            return [x for x in SIM_get_all_processors() if x.classname=='xtensa_OOBMSM_Tie_v8_DMR']
+
+@class core_grouping_ese:
+    cls = simics.confclass('core_grouping_ese')
+    @cls.iface.concurrency_group
+    def execution_group(self, group_index):
+        if group_index == 0:
+            return [x for x in SIM_get_all_processors() if x.classname=='x86-lmt-cse4-cet']
+
+@class core_grouping_aunit:
+    cls = simics.confclass('core_grouping_aunit')
+    @cls.iface.concurrency_group
+    def execution_group(self, group_index):
+        if group_index == 0:
+            return [x for x in SIM_get_all_processors() if x.classname=='xtensa_pnc_pm_xt_1_1']
+
+@class core_grouping_imhpunit:
+    cls = simics.confclass('core_grouping_imhpunit')
+    @cls.iface.concurrency_group
+    def execution_group(self, group_index):
+        if group_index == 0:
+            return [x for x in SIM_get_all_processors() if x.classname=='xtensa_srvr_xtensa_v002_22ww44_1']
+
+@class core_grouping_cbbpunit:
+    cls = simics.confclass('core_grouping_cbbpunit')
+    @cls.iface.concurrency_group
+    def execution_group(self, group_index):
+        if group_index == 0:
+            return [x for x in SIM_get_all_processors() if x.classname=='xtensa_dmr_uc_rtltie_23ww11']
+
+@class core_grouping_punit_aunit_ese:
+    cls = simics.confclass('core_grouping_punit_aunit_ese')
+    @cls.iface.concurrency_group
+    def execution_group(self, group_index):
+        if group_index == 0:
+            return [x for x in SIM_get_all_processors() if x.classname=='xtensa_dmr_uc_rtltie_23ww11' or x.classname=='xtensa_pnc_pm_xt_1_1' or x.classname=='x86-lmt-cse4-cet' or x.classname=='xtensa_srvr_xtensa_v002_22ww44_1']
+
+@class core_grouping_imh:
+    cls = simics.confclass('core_grouping_imh')
+    @cls.iface.concurrency_group
+    def execution_group(self, group_index):
+        if group_index == 0:
+            return [x for x in SIM_get_all_processors() if x.classname=='xtensa_srvr_xtensa_v002_22ww44_1' or x.classname=='xtensa_OOBMSM_Tie_v8_DMR' or x.classname=='arcsem110']
+
+@class core_grouping_cbb:
+    cls = simics.confclass('core_grouping_cbb')
+    @cls.iface.concurrency_group
+    def execution_group(self, group_index):
+        if group_index == 0:
+            return [x for x in SIM_get_all_processors() if x.classname=='xtensa_dmr_uc_rtltie_23ww11' or x.classname=='xtensa_pnc_pm_xt_1_1' or x.classname=='x86-lmt-cse4-cet']
+
+# all cores except cbb fmods (punit, aunit, ese)
+@class core_grouping_no_cbb:
+    cls = simics.confclass('core_grouping_no_cbb')
+    @cls.iface.concurrency_group
+    def execution_group(self, group_index):
+        if group_index == 0:
+            return [x for x in SIM_get_all_processors() if x.classname!='xtensa_dmr_uc_rtltie_23ww11' and x.classname!='xtensa_pnc_pm_xt_1_1' and x.classname!='x86-lmt-cse4-cet']
+
+# x86, imhpunit, s3m
+@class core_grouping_x86_imhpunit_s3m:
+    cls = simics.confclass('core_grouping_x86_imhpunit_s3m')
+    @cls.iface.concurrency_group
+    def execution_group(self, group_index):
+        if group_index == 0:
+            return [x for x in SIM_get_all_processors() if x.classname=='xtensa_srvr_xtensa_v002_22ww44_1' or x.classname=='arcsem110' or x.classname=='x86-panther-cove']
+
+# x86, s3m
+@class core_grouping_x86_s3m:
+    cls = simics.confclass('core_grouping_x86_s3m')
+    @cls.iface.concurrency_group
+    def execution_group(self, group_index):
+        if group_index == 0:
+            return [x for x in SIM_get_all_processors() if x.classname=='arcsem110' or x.classname=='x86-panther-cove']
+        
+# s3m, imhpunit
+@class core_grouping_s3m_imhpunit:
+    cls = simics.confclass('core_grouping_s3m_imhpunit')
+    @cls.iface.concurrency_group
+    def execution_group(self, group_index):
+        if group_index == 0:
+            return [x for x in SIM_get_all_processors() if x.classname=='xtensa_srvr_xtensa_v002_22ww44_1' or x.classname=='arcsem110']        
+
+#@SIM_create_object('core_grouping_x86', 'core_grouping_x86', [])
+#@SIM_create_object('core_grouping_s3m', 'core_grouping_s3m', [])
+#@SIM_create_object('core_grouping_msm', 'core_grouping_msm', [])
+#@SIM_create_object('core_grouping_ese', 'core_grouping_ese', [])
+#@SIM_create_object('core_grouping_aunit', 'core_grouping_aunit', [])
+#@SIM_create_object('core_grouping_cbbpunit', 'core_grouping_cbbpunit', [])
+#@SIM_create_object('core_grouping_imhpunit', 'core_grouping_imhpunit', [])
+#@SIM_create_object('core_grouping_punit_aunit_ese', 'core_grouping_punit_aunit_ese', [])
+
+#enable-mca
+#enable-multithreading
+#list-thread-domains -a 

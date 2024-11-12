@@ -1,0 +1,36 @@
+$disk_image = "win_26100_test.craff"
+add-directory "/simics/common_images"
+
+$num_cpus = 1
+$n_cores = 2
+#$perf_profile = "avx512,amx,5lvl_paging"
+$memory_per_dimm = 8192
+$create_network = TRUE
+$i210_present = TRUE
+$soc_config = lcc
+$gbe_softwaretrap_wa = TRUE
+$service_node_ip_address = "192.168.1.1"
+$dhcp_pool_id = "192.168.1.150"
+$ifwi_build_type=["release"]
+
+# limit memory to 60GB
+set-image-memory-limit 60000
+
+# Auto-generated file. Any changes will be overwritten!
+# https://ubit-artifactory-sh.intel.com/artifactory/list/simics_cpm-sh-local/CPM51/Silver/2024WW28.2/ (from Nascimento Da Silva, Thaynara)
+run-command-file "/simics/CPM51_Silver_2024WW28.2/simics-cpm5_1-systemc-components-6.0.pre29/targets/oakstream/oakstream-cpm-fmod-intree.simics"
+
+# Disable logging
+output-radix 16
+$visible = FALSE
+log-level 0
+log-type log-type = critical -disable
+log-type log-type = error -disable
+log-type log-type = info  -disable
+log-type log-type = spec-viol -disable
+
+# Disable real-time mode
+disable-real-time-mode
+
+# RDP port forwarding
+connect-real-network-port-in ethernet-link=ethernet_switch0 host-port=50024 target-ip=192.168.1.150 target-port=3389 -f

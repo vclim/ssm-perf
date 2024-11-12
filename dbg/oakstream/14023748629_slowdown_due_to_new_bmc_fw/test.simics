@@ -1,0 +1,42 @@
+# to run it 10 times: perf stat -B -r 10 -- ./simics test.simics --batch-mode
+
+load-target oakstream/1_socket_ucc-aunit-bmc-cbbpunit-ese-imhpunit-oobmsm-pfrprot-s3m os_type=uefi ifwi_build_type=["release"] log_dir=/tmp # (resolve-file "%script%")
+
+#if defined fw {
+#    oakstream.mb.bmc.spi_image0.clear-files
+#    if $fw==39 { oakstream.mb.bmc.spi_image0.add-diff-file (resolve-file "/nfs/site/disks/simcloud_suihaich_002/collateral/dmr/OBMC-oks-2024.39.0-ga0572b-0cacd29-pfr-full.ROM") }
+#    if $fw==38 { oakstream.mb.bmc.spi_image0.add-diff-file (resolve-file "/nfs/site/disks/simcloud_suihaich_002/collateral/dmr/OBMC-oks-2024.38.0-g435723-0cacd29-pfr-full.ROM") }   
+#} else { $fw=40 }
+
+
+###########################################
+
+#list-persistent-images
+version
+@import os
+@import datetime
+@start = time.time()
+script-branch {
+    bp.console_string.wait-for oakstream.mb.bmc.debugconsole.con " login:"
+    @print(f'[BMC BOOT] Elapsed time (in minutes)         = {((time.time()-start)/60):.2f}')
+    #@bmc_booted = time.time()
+    ptime -all
+    io-stats
+}
+script-branch {
+    bp.console_string.wait-for oakstream.serconsole.con "UEFI Internal Shell"
+    ptime -all
+    io-stats
+    @print(f'[BIOS BOOT] Elapsed time (in minutes)         = {((time.time()-start)/60):.2f}')
+    # save logs
+    @os.system(f'cp /tmp/oakstream.simics.log ./oakstream.simics.log.fw{simenv.fw}.{datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}')
+    stop
+}
+script-branch {
+    wait-for-global-time 100
+    @print(f'TIMEOUT at 100s virtual time ({((time.time()-start)/60):.2f} min)')
+    # save logs
+    @os.system(f'cp /tmp/oakstream.simics.log ./oakstream.simics.log.fw{simenv.fw}.{datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}')    
+    stop
+}
+run

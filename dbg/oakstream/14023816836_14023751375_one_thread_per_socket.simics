@@ -1,0 +1,54 @@
+# to run multiple times: perf stat -B -r 10 ./simics one_thread_per_socket.simics os_type=centos_stream_9 --batch-mode
+
+load-target oakstream/2_socket_ucc-generic os_type=$os_type ifwi_build_type=["release"] log_dir="/tmp/"
+
+@class core_grouping_0:
+    cls = simics.confclass('core_grouping_0')
+    @cls.iface.concurrency_group
+    def execution_group(self, group_index):
+        if group_index == 0:
+            return [x for x in SIM_get_all_processors() if ('mcp0' in x.name) or ('s3m0' in x.name)]
+
+@class core_grouping_1:
+    cls = simics.confclass('core_grouping_1')
+    @cls.iface.concurrency_group
+    def execution_group(self, group_index):
+        if group_index == 0:
+            return [x for x in SIM_get_all_processors() if ('mcp1' in x.name) or ('s3m1' in x.name)]
+
+@SIM_create_object('core_grouping_0', 'core_grouping_0', [])
+@SIM_create_object('core_grouping_1', 'core_grouping_1', [])
+
+enable-mca
+list-thread-domains
+set-threading-mode
+
+@import os
+@import datetime
+script-branch {
+    @start = time.time()
+    if $os_type=="uefi" { 
+        bp.console_string.wait-for oakstream.serconsole.con "UEFI Internal Shell"
+    } else {
+        bp.console_string.wait-for oakstream.serconsole.con " login:" 
+    }
+    ptime -all
+    io-stats
+    @print(f'[DEBUG] Elapsed time (in minutes)         = {((time.time()-start)/60):.2f}')
+    # save logs
+    @os.system(f'cp /tmp/oakstream.simics.log ./oakstream.simics.log.{simenv.os_type}.pass.{datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}')
+    stop
+}
+# timeout (based on virtual time)
+script-branch {
+    if $os_type=="uefi" { 
+        wait-for-global-time 200
+    } else {
+        wait-for-global-time 800
+    }
+    # save logs
+    @os.system(f'cp /tmp/oakstream.simics.log ./oakstream.simics.log.{simenv.os_type}.timeout.{datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}')
+    stop
+}
+
+run

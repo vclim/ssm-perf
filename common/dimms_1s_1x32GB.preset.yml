@@ -1,0 +1,14 @@
+%YAML 1.2
+---
+description: Memory Configuration CFG3 - Single Dimm 1R_x8_32Gb_32GB_RDIMM_DDR5_8000 (from vp/dmr/targets/presets_memory/cfg3_1R_x8_32Gb_32GB_RDIMM_DDR5_8000.preset.yml).
+args:
+  fuse:
+    socket0:
+      imh[0]:
+        override: "%simics%/targets/presets_memory/single_dimm_fuse.csv"
+      imh[1]:
+        override: "%simics%/targets/presets_memory/single_dimm_fuse.csv"
+  dimms:
+    [ [0x0, 0x0, 0x0, 0x0, "DDR5", 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log']]
+  poc_straps_single_dimm_mode_oem: True
+...

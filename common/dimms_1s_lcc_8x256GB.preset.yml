@@ -1,0 +1,16 @@
+%YAML 1.2
+---
+description:  Memory Configuration with DIMMS on Memory Channels MC1, MC3, MC5, and MC7.
+args:
+  dimms:
+    [
+     [0x0, 0x0, 0x0, 0x0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt'],
+     [0x0, 0x0, 0x1, 0x0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt'],
+     [0x0, 0x0, 0x2, 0x0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt'],
+     [0x0, 0x0, 0x3, 0x0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt'],
+     [0x0, 0x1, 0x0, 0x0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt'],
+     [0x0, 0x1, 0x1, 0x0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt'],
+     [0x0, 0x1, 0x2, 0x0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt'],
+     [0x0, 0x1, 0x3, 0x0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/SK_Hynix_HMCT14AHERA310N_RA256_Montage-2A1_MPS-0R62_IDT-0B1_IDT-0A2_8000.txt']
+    ]
+...

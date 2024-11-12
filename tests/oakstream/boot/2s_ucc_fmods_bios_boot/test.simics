@@ -1,0 +1,15 @@
+$log_dir = (resolve-file "%script%")
+$target = "oakstream/2_socket_ucc-aunit-cbbpunit-ese-imhpunit-oobmsm-s3m"
+
+@cmd = [ 
+    f'load-target {simenv.target}', f'log_dir={simenv.log_dir}',
+    'os_type=uefi', 'ifwi_build_type=["release"]',
+    'threading_mode=serialized', 'perf_profile="fast,direct_rdtsc"',
+    #f'presets=[["{simenv.log_dir}/../../../../common/dimms_2s_ucc_8x24GB.preset.yml",""],["{simenv.log_dir}/../../../../common/knobs_disable_magic_rowhammer.preset.yml",""]]',
+    'n_cores=8',
+]
+
+@print(' '.join(cmd))
+@run_command(' '.join(cmd))
+
+run-command-file "%script%/../../../../common/boot_profiling.include" 

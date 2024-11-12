@@ -1,0 +1,20 @@
+$log_dir = (resolve-file "%script%")
+$target = "targets/birchstream/birchstream-ap-rwc.simics
+
+@cmd = [
+    f'run-command-file {simenv.target}', f'log_dir={simenv.log_dir}',
+    'workload=harbor_benchdnn', 'n_cores=1',
+    'perf_profile=fast', 'threading_mode=serialized', 'disable_bios_knob_snc=TRUE',
+    'ifwi_build_type=["release"]', 'os_type = centos_stream',
+    'real_network=TRUE', 'enable_real_time_mode=FALSE',
+]
+
+@print(' '.join(cmd))
+@run_command(' '.join(cmd))
+
+# Service node network setup
+$ip_address = ($service_node.sn.get-ip-address-from-pool)
+$service_node.sn.add-host name = $system ip = $ip_address mac = $i210_mac
+connect-real-network target-ip = $ip_address
+
+run-command-file "%script%/../../../common/workload/branch_centos_setup.include"

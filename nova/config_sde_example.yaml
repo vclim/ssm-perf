@@ -1,0 +1,21 @@
+target_cpu_model: skx
+is_app_multi_threaded: false
+sde_path: /nfs/site/disks/utf/tools/sde/sde-internal-conf-9.45.0-2024-09-17-lin
+
+trace_length: 1_000_000
+
+max_num_traces: 10
+max_payload_ratio: 0.9
+
+simulation_skip: 100_000
+clear_stats_after: 100_000
+
+zsim_path: /nfs/site/disks/utf/tools/zsim/24.9.1-2024ww36/zsim-lin
+validation_apollo_profiling_mode: do_not_run
+
+validation_iwps_profiling_mode: do_not_run
+validation_coho_profiling_mode: run
+mfc_names: [CPI]
+keiko_path: /nfs/site/disks/utf/tools/keiko/2024_02_13_patriot_turnin_54858
+keiko_coho_config_pathfiles: [coho/config/adl_8c_gt2_q0_silicon.cfg]
+keiko_indigo_config_pathfiles: [coho/config/client/adl/sa/mc/adl_mc_ddr5_4800_x8_g2_1r.cfg]

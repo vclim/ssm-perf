@@ -1,0 +1,81 @@
+$cwd = (resolve-file "%script%/../")
+@sys.path.append(simenv.cwd)
+@import simics_utils
+
+if `'eaglestream' in simenv.target` {
+    $system = "eaglestream"
+    $hd_image = "eaglestream.disk.hd_image" 
+    @primary_core = "eaglestream.mb.cpu0.core[0][0]"
+}
+if `'birchstream' in simenv.target` {
+    $system = "birchstream"
+    $hd_image = $system.nvme.nvme_disk_image
+    @primary_core = "birchstream.mb.soc0.c_die0.tile0.module.core[0][0]"
+}
+if `'oakstream' in simenv.target` {
+    $system = "oakstream"
+    $hd_image = $system.nvme.nvme_disk_image
+    @primary_core = "oakstream.mb.mcp0.cbb_die0.tile0.module0.core[0][0]"
+}
+$con = $system.serconsole.con
+
+@simics_utils.set_processors_attr("use_halt_steps", False)
+#@simics_utils.set_processors_attr("cpuid_physical_bits_override", 46)
+#@print("[PERF] set physical address bits to 46")
+#@simics_utils.set_processors_attr("cpuid_num_c6_substates_override", 3)
+#@print("[PERF] set the number of c6 substates supported to 3")
+
+# following are mainlined for DMR, we keep it for old platform like GNR and EGS
+if `'apx' not in simenv.perf_profile` { 
+    @simics_utils.set_processors_attr("cpuid_apx_f_override", 0)
+    @print("[PERF] disabled APX")
+}
+if `'hle' not in simenv.perf_profile` { 
+    @simics_utils.set_processors_attr("cpuid_hle_override", 0)
+    @print("[PERF] disabled HLE")
+}
+if `'rtm' not in simenv.perf_profile` { 
+    @simics_utils.set_processors_attr("cpuid_rtm_override", 0)
+    @print("[PERF] disabled RTM")
+}
+if `'fred' not in simenv.perf_profile` {
+    @simics_utils.set_processors_attr("cpuid_fred_override", 0)
+    @print("[PERF] disabled FRED")
+}
+
+# add additional craff file
+if defined disk_image_patch {
+    if `simenv.disk_image_patch.startswith('http')` {
+        $hd_image.add-diff-file (resolve-url  $disk_image_patch)
+    } else {
+        $hd_image.add-diff-file (resolve-file $disk_image_patch)
+    }
+}
+
+@run_command('list-thread-domains')
+@run_command('list-persistent-images')
+@run_command('version')
+$hostname = (shell "hostname")
+@print(f"[PERF] host = {simenv.hostname}")
+enable-unsupported-feature internals 
+output-radix 10 # to make vmp-stats output more readable
+
+log-type -disable unimpl
+log-type -disable spec-viol
+
+if not defined image_usr { $image_usr = "root" }
+if not defined image_pwd { $image_pwd = "" }
+
+if not defined enable_perf_for_workload { $enable_perf_for_workload = FALSE }
+if not defined enable_lit_trace         { $enable_lit_trace         = FALSE }
+
+# reduce latency of the simulated network 
+#ethernet_switch0.link->immediate_delivery = TRUE
+
+# start SimicsFS
+start-simicsfs-server
+
+run-command-file "%script%/branch_workloads.include"
+
+sim->fail_on_warnings = FALSE
+run

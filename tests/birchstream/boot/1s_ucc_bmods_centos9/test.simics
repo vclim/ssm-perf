@@ -1,0 +1,18 @@
+$log_dir = (resolve-file "%script%")
+$target = "birchstream/birchstream-ap-rwc-1_socket_ucc-00-generic"
+
+@cmd = [
+    f'load-target {simenv.target}', f'log_dir={simenv.log_dir}',
+    'os_type=centos_stream', 'ifwi_build_type=["release"]',    
+    'threading_mode=serialized', 'perf_profile="fast,direct_rdtsc"',
+    'disk_image="/nfs/site/disks/simcloud_suihaich_002/collateral/dmr/dmr-bkc-centos-stream-9-coreserver-6.9-2.7-4.craff"',
+    'n_cores=16',
+#    f'preset="{simenv.log_dir}/../../../../common/dimms_bhs_1s_ucc_16x32GB.preset.yml"',
+]
+
+@print(' '.join(cmd))
+@run_command(' '.join(cmd))
+
+run-command-file "%script%/../../../../common/boot_profiling.include" 
+run    
+

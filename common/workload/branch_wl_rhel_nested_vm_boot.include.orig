@@ -1,0 +1,66 @@
+if not defined con { $con = $system.serconsole.con }
+
+# to suppress excessive logging from cpu objects
+log-type -disable unimpl
+
+@log("---RHEL booted---")
+
+### mount guest OS images
+bp.console_string.wait-then-write $con "# " "mount /dev/myvg/mylv /mnt \n"
+bp.console_string.wait-then-write $con "# " "ls -l /mnt/ \n"
+bp.console_string.wait-then-write $con "# " "cd /mnt/ \n"
+
+# to add room when we need to decompress the guess OS image in L1 VM
+bp.console_string.wait-then-write $con "# " "qemu-img resize  rhel8u0_RC_10G_legacy.qcow2 50G \n"
+
+# hack to reduce simics logs 
+$cores = `[c.name for c in SIM_get_all_processors()]`
+foreach $c in $cores {
+    $c->add_msr=[[0x819, 0, 0, 0, 0, FALSE, "MANUALLY_ADDED_0x819",0]]
+}
+
+### bring up L1 VM
+bp.console_string.wait-then-write $con "# " "/usr/libexec/qemu-kvm -enable-kvm -cpu host -drive file=/mnt/rhel8u0_RC_10G_legacy.qcow2,if=none,id=virtio-disk0 -device virtio-blk-pci,drive=virtio-disk0 -m 4096 -nographic -serial mon:stdio \n"
+bp.console_string.wait-then-write $con "localhost login:" "root\n"
+bp.console_string.wait-then-write $con "Password:" "123456\n"        
+@log("---L1 VM booted---")
+
+# create partition
+bp.console_string.wait-then-write $con "# " "fdisk /dev/vda \n"
+bp.console_string.wait-then-write $con "Command (m for help):" "n\n" # new partition
+bp.console_string.wait-then-write $con "Select " "\n"
+bp.console_string.wait-then-write $con "First sector" "\n"
+bp.console_string.wait-then-write $con "Last sector" "\n"
+bp.console_string.wait-then-write $con "Command (m for help):" "w\n" # save
+
+# create PV, VG, LV
+bp.console_string.wait-then-write $con "# " "pvcreate /dev/vda4 \n"
+bp.console_string.wait-then-write $con "WARNING: dos signature detected on /dev/vda4" "y\n"
+bp.console_string.wait-then-write $con "# " "vgcreate myvg /dev/vda4 \n"
+bp.console_string.wait-then-write $con "# " "lvcreate -L 39G -n mylv myvg \n"
+bp.console_string.wait-then-write $con "# " "mkfs.xfs /dev/myvg/mylv \n"
+bp.console_string.wait-then-write $con "# " "mount /dev/myvg/mylv /mnt \n"
+
+bp.console_string.wait-then-write $con "# " "df -kh /mnt \n"
+bp.console_string.wait-then-write $con "# " "lsblk \n"
+bp.console_string.wait-then-write $con "# " "cd /mnt \n"    
+
+bp.console_string.wait-then-write $con "# "  "mv /root/rhel8u0_RC_10G_legacy.img.gz . \n"
+bp.console_string.wait-then-write $con "# "  "gzip -d rhel8u0_RC_10G_legacy.img.gz \n"
+bp.console_string.wait-then-write $con "# "  "qemu-img create -b rhel8u0_RC_10G_legacy.img -f qcow2 rhel8u0_RC_10G_legacy.qcow2 \n"
+
+### bring up L2 VM
+@log("---Start booting L2 VM---")
+disable-vmp # https://hsdes.intel.com/appstore/article/#/22011745230
+bp.console_string.wait-then-write $con "# " "/usr/libexec/qemu-kvm -enable-kvm -cpu host -drive file=/mnt/rhel8u0_RC_10G_legacy.qcow2,if=none,id=virtio-disk0 -device virtio-blk-pci,drive=virtio-disk0 -m 4096 -nographic -serial mon:stdio \n"
+@start_time = datetime.datetime.now()
+bp.console_string.wait-then-write $con "The selected entry will be started automatically" "\n"
+bp.console_string.wait-for $con "Probing EDD"
+bp.console_string.wait-then-write $con "localhost login:" "root\n"
+bp.console_string.wait-then-write $con "Password:" "123456\n"        
+# don't wait for shell prompt here, the wait is done in branch_workload.simics # bp.console_string.wait-for $con "# "
+@log("---L2 VM booted---")
+@log("---L2 VM boot time: %s " % str( datetime.datetime.now() - start_time ) )
+
+$wl_run_cmd = "\n"
+

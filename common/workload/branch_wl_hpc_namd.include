@@ -1,0 +1,9 @@
+if not defined con { $con = $system.serconsole.con }
+if not defined wrf_run_seconds { $wrf_run_seconds = 216 } # 3 timesteps (72sec per timestep)
+
+bp.console_string.wait-then-write $con "# " ("ln -fs /host/nfs/site/disks/simcloud_suihaich_002/cluster/wl_files/hpc/namd_dbr_package.tar . \n")
+bp.console_string.wait-then-write $con "# " "tar -xf namd_dbr_package.tar \n"
+bp.console_string.wait-then-write $con "# " "cd namd_dbr_package \n"
+
+bp.console_string.wait-then-write $con "# " "export LD_LIBRARY_PATH=/opt/intel/oneapi/mkl/latest/lib/intel64/ \n"
+$wl_run_cmd = "./namd_global/namd/Linux-AVX512-icc/namd2 +p 1 +setcpuaffinity ./namd_global/apoa1/apoa1.namd \n"

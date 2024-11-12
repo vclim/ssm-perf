@@ -1,0 +1,16 @@
+$log_dir = (resolve-file "%script%")
+$target = "oakstream/1_socket_ucc-generic"
+
+@cmd = [
+    f'load-target {simenv.target}', f'log_dir={simenv.log_dir}',
+    'os_type=centos_stream_9', 'ifwi_build_type=["release"]',    
+    'threading_mode=serialized', 'perf_profile="fast,direct_rdtsc"',
+    #'use_fast_caching=TRUE',
+    #'full_mem_decode=FALSE',
+    f'preset="{simenv.log_dir}/../../../../common/knobs_disable_magic_rowhammer.preset.yml"',
+]
+
+@print(' '.join(cmd))
+@run_command(' '.join(cmd))
+
+run-command-file "%script%/../../../../common/boot_profiling.include" 

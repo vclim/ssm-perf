@@ -1,0 +1,66 @@
+$hostname = (shell "hostname")
+$log_dir = "./logs_" + $hostname  # (resolve-file "%script%")
+$target = "oakstream/1_socket_lcc-generic"
+
+@cmd = [
+    f'load-target {simenv.target}', f'log_dir={simenv.log_dir}',
+    'os_type=centos_stream_9', 'ifwi_build_type=["release"]',    
+    'threading_mode=serialized', 'perf_profile="fast,direct_rdtsc"',
+    f'presets=["/nfs/site/disks/simcloud_suihaich_001/frameworks.simulators.simics.cpu.simicsintegrationengineering.new/tests/perf/common/dimms_1s_1x32GB.preset.yml", "/nfs/site/disks/simcloud_suihaich_001/frameworks.simulators.simics.cpu.simicsintegrationengineering.new/tests/perf/common/enable-real-network.preset.yml"]',
+    'n_cores=1', 
+    f'disk_image="/nfs/site/disks/simcloud_suihaich_002/collateral/dmr/dmr-bkc-centos-stream-9-coreserver-6.9-3.6-5.fred.kunit.craff"',
+]
+@print(' '.join(cmd))
+@run_command(' '.join(cmd))
+
+foreach $c in (oakstream.mb->cpu_list) { $c->use_halt_steps = FALSE }
+foreach $c in (oakstream.mb->cpu_list) { $c->cpuid_fred_override = 0 }
+enable-unsupported-feature internals 
+output-radix 10 # to make vmp-stats output more readable
+
+$sercon = oakstream.serconsole.con
+script-branch "OS Boot profiling" {
+    if defined vtune {
+        @os.environ['PATH'] += ':/nfs/site/disks/central_tools_tree/sles12/flamegraph/FlameGraph/'
+        enable-unsupported-feature feature = vtune-measurement -v
+        new-vtune-measurement vtune-path=/nfs/site/disks/central_tools_tree/sles12/vtune/2022.1.0/bin64
+        vtune0.start   
+    }
+
+    # disable fred in GRUB menu
+    bp.console_string.wait-for $sercon "Press enter to boot the selected OS"
+    $sercon.input "e"
+    foreach $i in (range 4)  { $sercon.input -e "Down" }
+    foreach $i in (range 22) { $sercon.input -e "Left" }
+    enable-real-time-mode; wait-for-global-time -relative 3; foreach $i in (range 7)  { $sercon.input -e "Del"; wait-for-global-time -relative 3 }
+    $sercon.input -e "C-x"
+    echo "Disabled fred in boot menu"; disable-real-time-mode
+    
+    # run kunit
+    $sercon.wait-then-write " login:" "root\n"
+    $sercon.wait-then-write "Password:" "123456\n"        
+    $sercon.wait-then-write "# " "cd /home/kunit/src/os.linux.kernel.bkc-dmr-6.9-v3.6/tools/testing/kunit\n"
+    ptime -all
+    io-stats
+    
+    #$x = (list-objects -all -recursive type = srv-pnc-ucode)
+    #new-bank-coverage-tool banks = $x
+    #set-time-quantum 0.000010 # 10us
+
+    $sercon.wait-then-write "# " "./kunit.py run \n"           
+    $sercon.wait-then-write "# " "\n"    
+    stop
+    ptime -all
+    io-stats
+    print-vmp-disabled-reasons-stats
+    vmp-stats
+    #foreach $b in $x { coverage_tool0.access-count $b }
+    
+    if defined vtune {
+        vtune0.stop
+        vtune0.flamegraph svg-output-filename=($log_dir + "/vtune_kunit_dis_fred_in_grub_complete_run.svg")
+    }  
+}
+    
+sim->fail_on_warnings = FALSE
+run

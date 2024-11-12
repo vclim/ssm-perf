@@ -1,0 +1,18 @@
+load-target oakstream/1_socket_ucc-aunit-bmc-cbbpunit-ese-imhpunit-oobmsm-pfrprot-s3m ifwi_build_type=["release"] perf_profile="fast,bus_lock,split_lock" threading_mode=serialized presets=[["presets_memory/cfg3_1R_x8_32Gb_32GB_RDIMM_DDR5_8000",""]] n_cores=4 disk_image="/nfs/site/disks/simcloud_akumarr_001/projects/dmr-6.0/OS_Image/Windows.26212.Server.HvOn.vhdx"
+
+$system = "oakstream"
+$sercon = $system.serconsole.con
+
+script-branch "OS Boot profiling" {
+    bp.console_string.wait-for $sercon "Press [Enter] to directly boot" 
+    foreach $c in (oakstream.get-processor-list) {
+        $c->ia32_vmx_procbased_ctls2 = $c->ia32_vmx_procbased_ctls2 & (~(1<<62))
+    }
+    
+    bp.hap.wait-for "Core_Magic_Instruction" 
+    stop
+}
+
+run
+
+# 19min

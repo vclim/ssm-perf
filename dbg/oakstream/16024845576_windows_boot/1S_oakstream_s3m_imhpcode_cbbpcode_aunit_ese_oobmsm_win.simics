@@ -1,0 +1,57 @@
+
+run-command-file "%script%/test_config_win.simics"
+
+#run-command-file "%simics%/targets/oakstream/ucc/1S_16_DIMM_config.include"
+
+## from targets/presets_memory/cfg3_OEM_1R_x8_32Gb_32GB_RDIMM_DDR5_8000.preset.yml
+#$dimms = [ [0x0, 0x0, 0x3, 0x0, "DDR5", "/nfs/site/disks/ssg_stc_simics_workloads/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD24_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log"]]
+#$poc_straps_single_dimm_mode_oem = TRUE
+
+# 16 x 24GB
+$dimms = [
+     [0, 0,  0, "DDR5", "/nfs/site/disks/ssg_stc_simics_workloads/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD24_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log"],
+     [0, 1,  0, "DDR5", "/nfs/site/disks/ssg_stc_simics_workloads/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD24_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log"],
+     [0, 2,  0, "DDR5", "/nfs/site/disks/ssg_stc_simics_workloads/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD24_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log"],
+     [0, 3,  0, "DDR5", "/nfs/site/disks/ssg_stc_simics_workloads/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD24_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log"],
+     [0, 4,  0, "DDR5", "/nfs/site/disks/ssg_stc_simics_workloads/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD24_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log"],
+     [0, 5,  0, "DDR5", "/nfs/site/disks/ssg_stc_simics_workloads/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD24_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log"],
+     [0, 6,  0, "DDR5", "/nfs/site/disks/ssg_stc_simics_workloads/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD24_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log"],
+     [0, 7,  0, "DDR5", "/nfs/site/disks/ssg_stc_simics_workloads/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD24_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log"],
+     [0, 8,  0, "DDR5", "/nfs/site/disks/ssg_stc_simics_workloads/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD24_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log"],
+     [0, 9,  0, "DDR5", "/nfs/site/disks/ssg_stc_simics_workloads/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD24_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log"],
+     [0, 10, 0, "DDR5", "/nfs/site/disks/ssg_stc_simics_workloads/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD24_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log"],
+     [0, 11, 0, "DDR5", "/nfs/site/disks/ssg_stc_simics_workloads/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD24_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log"],
+     [0, 12, 0, "DDR5", "/nfs/site/disks/ssg_stc_simics_workloads/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD24_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log"],
+     [0, 13, 0, "DDR5", "/nfs/site/disks/ssg_stc_simics_workloads/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD24_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log"],
+     [0, 14, 0, "DDR5", "/nfs/site/disks/ssg_stc_simics_workloads/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD24_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log"],
+     [0, 15, 0, "DDR5", "/nfs/site/disks/ssg_stc_simics_workloads/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD24_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log"]
+    ] 
+
+$fmod="s3m,imhpunit,cbbpunit,aunit,ese,oobmsm,bmc"
+
+#$perf_profile="fast,bus_lock,split_lock" 
+#$n_cores=4
+
+run-command-file "%simics%/targets/oakstream/oakstream.simics"
+echo "CPU Type ----> "+$soc_config
+echo "Cores -------> "+$n_cores
+echo "BIOS --------> "+$bios
+echo "OS image ----> "+$disk_image
+echo "BMC FW ------> "+$bmc_fw
+echo "fmod --------> "+$fmod
+echo "perf_profile-> "+$perf_profile
+version
+
+
+$system = "oakstream"
+$sercon = $system.serconsole.con
+
+script-branch "OS Boot profiling" {
+    bp.console_string.wait-for $sercon "Press [Enter] to directly boot" 
+    foreach $c in (oakstream.get-processor-list) {
+        $c->ia32_vmx_procbased_ctls2 = $c->ia32_vmx_procbased_ctls2 & (~(1<<62))
+    }
+    
+    bp.hap.wait-for "Core_Magic_Instruction" 
+    stop
+}

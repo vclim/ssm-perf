@@ -1,0 +1,17 @@
+$log_dir = (resolve-file "%script%")
+$target = "oakstream/1_socket_lcc-generic"
+
+@cmd = [
+    f'load-target {simenv.target}', f'log_dir={simenv.log_dir}',
+    'os_type=centos_stream_9', 'ifwi_build_type=["release"]',    
+    'threading_mode=serialized', 'perf_profile="fast,direct_rdtsc"',
+    'n_cores=1',
+    #'disk_image="/nfs/site/disks/ssg_stc_simics_workloads/artifactory/simics-repos/ts/images/gnr/centos/centos-8-stream-embargo-coreserver-202303070226.craff"',
+    'disk_image="/nfs/site/disks/simcloud_suihaich_002/collateral/dmr/dmr-bkc-centos-stream-9-coreserver-6.9-3.6-5.craff"', # kernel panic on default dmr-bkc-centos-stream-9-coreserver-6.7-2.1-2.craff, no panic on 6.9.3.6.5
+    f'presets=[["{simenv.log_dir}/../../../../common/dimms_1s_1x32GB.preset.yml",""],["{simenv.log_dir}/../../../../common/knobs_disable_magic_rowhammer.preset.yml",""]]',
+]
+
+@print(' '.join(cmd))
+@run_command(' '.join(cmd))
+
+run-command-file "%script%/../../../../common/boot_profiling.include" 

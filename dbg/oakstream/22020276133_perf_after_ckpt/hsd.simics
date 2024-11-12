@@ -1,0 +1,19 @@
+add-directory "%script%/../../common_images"
+$n_cores=16
+if not defined soc_config {$soc_config = "lcc"}
+if not defined ifwi_build_type {$ifwi_build_type = ["release"]}
+$enable_i82599_real_network = TRUE
+$dhcp_pool_ip = 192.168.1.150
+$service_node_ip_address = "192.168.1.1"
+
+#if not defined log_file             { $log_file  = "oakstream-esxi.log" }
+#if not defined disk_image           { $disk_image = "" }
+#if not defined uart_log_file        { $uart_log_file = "hsuart-log.txt" }
+
+$disk_image = "/nfs/site/disks/simcloud_spankrat_001/exchange/dmr_8.0.3_vm_updated.craff"
+run-command-file "%simics%/targets/oakstream/oakstream.simics"
+
+connect-real-network-port-in -tcp 22 target-ip = $dhcp_pool_ip ethernet-link = $eth_link 2222
+connect-real-network-port-in -tcp 443 target-ip = $dhcp_pool_ip ethernet-link = $eth_link 4430
+#enable-vmp-feature direct_rdtsc
+#enable-real-time-mode

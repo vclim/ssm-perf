@@ -1,0 +1,34 @@
+### this is an example of calling boot tester from simics script, the catch is to set init_testers to TRUE
+
+$log_dir = (resolve-file "%script%")
+$target = "oakstream/1_socket_ucc-generic"
+
+@cmd = [
+    f'load-target {simenv.target}', f'log_dir={simenv.log_dir}',
+    'os_type=esxi800',    
+    'os_product_type=consumer',    
+    'os_build_type=debug',
+    'os_version="U2-EA2-11372496"',
+    'networking:create_network=TRUE',
+    'networking:i82599_present=TRUE',
+    'ESXI_VERSION_STR=8.0.2',
+    'threading_mode=serialized', 'perf_profile="default,direct_rdtsc"', 'ifwi_build_type=["release"]',     
+    'init_testers=TRUE',
+#    'disk_image="/nfs/site/disks/ssg_stc_simics_workloads/artifactory/simics-repos/ts/images/dmr/esxi/ESXi_DMR_with_Magic_Ins_11.craff"', # cannot set this, otherwise conf.boot_tester.grub_option will not have correct value and boot tester will not modify the esxi boot options
+]
+
+@print(' '.join(cmd))
+@run_command(' '.join(cmd))
+
+$esxi_ver = "8.0.2"
+run-command-file "%script%/../../../../common/boot_profiling.include" 
+
+#@from simmod.pylib import create
+#@from simmod.srv_tests import env
+#@presets = {}
+#@with env.Config(test_dir=simenv.log_dir, test_target=simenv.target, presets=presets, exec_timeout=3600) as test:
+    #create.run_target(simenv.target, platf_params, presets=presets)
+#    test.init_done()
+
+@conf.boot_tester.enable_sie_check = False # to improve performance
+@conf.boot_tester.iface.tester.boot_test(conf.boot_tester.iface.tester.get_exec_mode('ESXI_DEBUG_MODE'), conf.boot_tester.iface.tester.get_scenario('SIMPLEBOOT'))

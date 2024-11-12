@@ -1,0 +1,46 @@
+%YAML 1.2
+---
+description:  Memory Configuration with 2 DIMMS per channel on Memory Channels MC0, MC1, MC2, MC3, MC4, MC5, MC6, MC7, MC8, MC9, MC10, MC11, MC12, MC13, MC14, MC15.
+args:
+  fuse:
+    socket0:
+      imh[0]:
+        override: "%simics%/targets/presets_memory/two_dimms_per_channel_fuse.csv"
+      imh[1]:
+        override: "%simics%/targets/presets_memory/two_dimms_per_channel_fuse.csv"
+  dimms:
+    [
+     [0, 0,  0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 1,  0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 2,  0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 3,  0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 4,  0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 5,  0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 6,  0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 7,  0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 8,  0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 9,  0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 10, 0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 11, 0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 12, 0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 13, 0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 14, 0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 15, 0, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 0,  1, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 1,  1, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 2,  1, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 3,  1, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 4,  1, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 5,  1, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 6,  1, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 7,  1, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 8,  1, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 9,  1, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 10, 1, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 11, 1, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 12, 1, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 13, 1, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 14, 1, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log'],
+     [0, 15, 1, 'DDR5', 'https://simics-artifactory.devtools.intel.com/artifactory/simics-repos/ts/dumps/dmr/spd_files/Samsung_M321R3GA3PB1-CCPPC_RD32_Montage-2A1_TI-0D2_IDT-0B1_IDT-0A2_8000.log']
+    ]     
+...

@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=../../../../docs/schema/config-schema.json
+# the length of each trace, calculated as the total litcount across all cores
+trace_length: 3_000_000
+
+# at most this many traces will be selected
+max_num_traces: 2
+
+# path of a simics project that can be used to load the checkpoint
+simics_project_path: PWD
+
+# tool used for trace selection
+simulation_points_selection_method: kyte
+
+# profiles collected on the whole ROI
+supported_profiles_simics:
+  - memory_working_sets
+  - exception_histogram
+  - mode_frequency
+  - instruction_histogram
+
+# the effective profile used to select traces - defaults to all available profiles, can be set to a subset of
+#  `supported_profiles_simics`
+simulation_points_profile_methods:
+  - memory_working_sets
+  - instruction_histogram
+
+# configures
+iwps_config:
+  config_files: [client/adl/adl.cfg]
+  cores: 4
+  path: /nfs/site/disks/utf/tools/iwps/intelwps-internal-conf-24.02-2024-02-05-lin
+  tbb_path: /nfs/site/disks/utf/tools/tbb/2021.12/
+
+# used to speed up the recording profile step by parallelizing the profile collection
+# each parallel task will simulate at most this many slices where a slice is the same length as a trace
+simics_max_slices_to_profile_serially: 20
+
+# when set all checkpoints created would be independent - defaults to `false`
+# not recommended as checkpoint can take a lot of disk space
+simics_create_independent_checkpoints: false
+
+# configuration of the kyte tool
+kyte_config:
+  executable_path: /nfs/site/disks/utf/tools/kyte/1.2.6/kyte
+
+# used to run simics, iwps etc. via netbatch
+netbatch_config:
+  method: rest
+  token: auto
+  feeder: DUMMY.intel.com:56266
+  pool_name: DUMMY_normal
+  qslot: /DUMMY/qslot
+  ec_class: SLES12&&2C&&2G&&DUMMY
+  posix_path_workdir: PWD 
+  all_tools_run_via_netbatch: false
+  run_in_simcloud: false
+
+# must be set to `simics`
+tracing_platform: simics

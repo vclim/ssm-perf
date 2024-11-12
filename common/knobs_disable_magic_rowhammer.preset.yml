@@ -1,0 +1,8 @@
+%YAML 1.2
+---
+description: Disable MagicRowHammer for performance purpose
+args:
+  knobs:
+    bios_knobs: "disable_magic_rowhammer"
+    bios_knobs_string: "DfxIpMseMagicRowhammer=0x0"
+...

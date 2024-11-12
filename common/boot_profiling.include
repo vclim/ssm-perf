@@ -1,0 +1,244 @@
+@import sys
+@import os
+
+$cwd = (resolve-file "%script%")
+@sys.path.append(simenv.cwd)
+@import simics_utils
+
+@simenv.system = simenv.target.split('/')[0]
+@if simenv.system=="oakstream"   : primary_core = "oakstream.mb.mcp0.cbb_die0.tile0.module0.core[0][0]"
+@if simenv.system=="birchstream" : primary_core = "birchstream.mb.soc0.c_die0.tile0.module.core[0][0]"
+$sercon = $system.serconsole.con
+
+@simenv.t = simenv.target.split('/')[1].replace('-', '_')
+if not defined os_type { $os_type = (params.get($t + ":os_type")) }
+if not defined disk_image { $disk_image = (params.get($t + ":disk_image")) }
+if not defined perf_profile { $perf_profile = (params.get($t + ":perf_profile")) }
+if not defined num_cpus { $num_cpus = (params.get($t + ":num_cpus")) }
+
+@simics_utils.set_processors_attr("use_halt_steps", False)
+#@simics_utils.set_processors_attr("cpuid_physical_bits_override", 46)
+#@print("[PERF] set physical address bits to 46")
+#@simics_utils.set_processors_attr("cpuid_num_c6_substates_override", 3)
+#@print("[PERF] set the number of c6 substates supported to 3")
+
+#@simics_utils.set_processors_attr("cpuid_memory_ctrl_override", 0)
+#@print("[PERF] set cpuid_memory_ctrl_override to 1 (supports the UC-lock disable feature)")
+#@simics_utils.set_processors_attr("cpuid_bus_lock_intercept_override", 1)
+#@print("[PERF] set cpuid_bus_lock_intercept_override to 0")
+
+# following are mainlined for DMR, we use it for GNR
+if $system=="birchstream" {
+    if `'apx' not in simenv.perf_profile` {
+        @simics_utils.set_processors_attr("cpuid_apx_f_override", 0)
+        @print("[PERF] disabled APX")
+    }
+    if `'hle' not in simenv.perf_profile` {
+        @simics_utils.set_processors_attr("cpuid_hle_override", 0)
+        @print("[PERF] disabled HLE")
+    }
+    if `'rtm' not in simenv.perf_profile` {
+        @simics_utils.set_processors_attr("cpuid_rtm_override", 0)
+        @print("[PERF] disabled RTM")
+    }
+    if `'fred' not in simenv.perf_profile` {
+        @simics_utils.set_processors_attr("cpuid_fred_override", 0)
+        @print("[PERF] disabled FRED")
+    }
+}
+
+output-radix 10 # to make vmp-stats output more readable
+@run_command('sim.info')
+@run_command('list-thread-domains -a')
+@run_command('list-persistent-images')
+@run_command('set-max-time-span')
+@run_command('version')
+@run_command('list-script-branches')
+$hostname = (shell "hostname")
+@print(f"[PERF] host = {simenv.hostname}")
+enable-unsupported-feature internals
+
+# print dimms info
+foreach $d in (list-objects -all substr = dimm_image) { $d.info }
+try {
+    dump-parameters -all "full_mem_decode"
+} except {
+    if defined full_mem_decode  { echo ("[PERF] full_mem_decode  = " + $full_mem_decode)  } else { echo ("[PERF] full_mem_decode not defined") }
+}
+try {
+    dump-parameters -all "use_fast_caching"
+} except {
+    if defined use_fast_caching { echo ("[PERF] use_fast_caching = " + $use_fast_caching) } else { echo ("[PERF] use_fast_caching not defined") }
+}
+
+# x86 activity state tracking
+if defined x86_state_track {
+    @x86_state_track = simics_utils.X86CoreActivityState(run_command(f'{simenv.system}.get-processor-list'))
+    script-branch "Track x86 core state" {
+        wait-for-simulation-started
+        while(1) {
+            wait-for-global-time -relative `x86_state_track.interval`
+            @x86_state_track.update()
+        }
+    }
+}
+
+# probes
+if defined probes {
+    try {
+        enable-probes
+        # hit error on GNR model
+    } except {
+        interrupt-script "Error in enabling probes" -error
+    }
+
+    @probe_list = simics_utils.Probes.global_level1
+    @if "L2" in simenv.probes : probe_list += simics_utils.Probes.global_level2
+    @if "L3" in simenv.probes : probe_list += simics_utils.Probes.global_level3
+    @if "fmod_sum" in simenv.probes : probe_list += simics_utils.Probes.create_fmod_sum_probes(simics_utils.Probes.fmod_sum, simenv.num_cpus)
+    @if "bmod_sum" in simenv.probes : probe_list += simics_utils.Probes.create_bmod_sum_probes(simics_utils.Probes.bmod_sum, simenv.num_cpus)
+    @if "sum" not in simenv.probes and "no_core" not in simenv.probes : probe_list += simics_utils.Probes.core_level1
+    @simics_utils.ProbeMon("probe_mon", clock=primary_core, output=(simenv.log_dir+"/probe_mon.csv")).add_probes(probe_list)
+    probe_mon.status
+
+    @if "host_mem_usage" in simenv.probes:
+        simics_utils.ProbeMon("probe_mon_host_mem_usage", clock=primary_core, output=(simenv.log_dir+"/host_mem_usage.txt")).add_probes(simics_utils.Probes.host_mem_usage)
+
+    @if "core_disabled_reason" in simenv.probes:
+        simics_utils.ProbeMon("probe_mon_disabled_reason", clock=primary_core, output=(simenv.log_dir+"/probe_mon_disabled_reason.csv")).add_probes(simics_utils.Probes.core_disabled_reason)
+
+}
+
+if defined perfmeter {
+    $sp = (new-system-perfmeter probe-collection=$perfmeter sampling-mode=virtual interval=1 clock=`primary_core` -print-no-samples -summary output-file=($log_dir+"/perfmeter.csv"))
+}
+
+# vtune for specified window
+if defined vtune_window {
+    @vtune_start_end = simenv.vtune_window.split('-')
+    @simics_utils.vtune_profile(svg=f'{simenv.log_dir}/vtune_{simenv.vtune_window}.svg', profile=f'{simenv.log_dir}/vtune_{simenv.vtune_window}_hotspots.csv', start=float(vtune_start_end[0]), end=float(vtune_start_end[1]))
+}
+
+@simics_utils.enable_cache_reads_for_images()
+
+# script-branch
+
+## run for specified amount of virtual time
+script-branch {
+    wait-for-simulation-started
+    @zero = simics_utils.SimPoint(primary_core)
+    @run_command('sim.status')
+
+    if defined vtime_limit {
+        wait-for-global-time $vtime_limit
+        @simics_utils.SimPoint(primary_core).print_delta(zero, f'ROI (vtime 0 to {simenv.vtime_limit})')
+        print-vmp-disabled-reasons-stats
+        @simics_utils.print_vmp_stats()
+        if defined x86_state_track { `x86_state_track.report_and_clear()` }
+        if defined vtune { `simics_utils.vtune_stop('vtune_bios_boot', f'{simenv.log_dir}/vtune_bios_boot.svg', f'{simenv.log_dir}/vtune_bios_boot.csv')` }
+        if defined probes {
+            try { probe_mon.summary max=0 } except {}
+            try { probe_mon.html-report html-dir=($log_dir+"/probe_mon") } except {}
+            try { probe_mon_host_mem_usage.summary max=0 } except {}
+        }
+        if $system=="birchstream" { quit } else { stop }
+    }
+}
+
+## BMC profiling
+if `len([obj for obj in SIM_get_all_processors() if "bmc" in obj.name])>0` {
+    $sercon_bmc = $system.mb.bmc.debugconsole.con
+    script-branch "BMC profiling" {
+        bp.console_string.wait-for $sercon_bmc " login:"
+        @bmc_booted = simics_utils.SimPoint(primary_core)
+        @bmc_booted.print_delta(zero, "BMC BOOT")
+        if defined x86_state_track { `x86_state_track.report()` }
+    }
+}
+
+## boot profiling
+script-branch "Boot profiling" {
+    if defined vtune { `simics_utils.vtune_start(name="vtune_bios_boot")` }
+
+
+    bp.console_string.wait-for $sercon "Press [Enter] to directly boot"
+    if $os_type=="uefi" {
+        bp.console_string.wait-for $sercon "UEFI Internal Shell"
+        @simics_utils.SimPoint(primary_core).print_delta(zero, "ROI (BIOS BOOT)")
+        print-vmp-disabled-reasons-stats
+        @simics_utils.print_vmp_stats()
+        if defined x86_state_track { `x86_state_track.report_and_clear()` }
+        if defined vtune { `simics_utils.vtune_stop('vtune_bios_boot', f'{simenv.log_dir}/vtune_bios_boot.svg', f'{simenv.log_dir}/vtune_bios_boot.csv')` }
+        if defined probes {
+            try { probe_mon.summary max=0 } except {}
+            try { probe_mon.html-report html-dir=($log_dir+"/probe_mon") } except {}
+            try { probe_mon_host_mem_usage.summary max=0 } except {}
+        }
+        if $system=="birchstream" { quit } else { stop }
+
+    } else {
+
+        if `"centos" in simenv.os_type.lower()` { bp.console_string.wait-for $sercon "0.000000] Linux version" }
+        @start = simics_utils.SimPoint(primary_core)
+        @start.print_delta(zero, "BIOS BOOT")
+        print-vmp-disabled-reasons-stats
+        @simics_utils.print_vmp_stats(clear=True)
+        clear-vmp-disabled-reasons-stats
+        if defined x86_state_track { `x86_state_track.report_and_clear()` }
+        if defined vtune { `simics_utils.vtune_stop('vtune_bios_boot', f'{simenv.log_dir}/vtune_bios_boot.svg', f'{simenv.log_dir}/vtune_bios_boot.csv')` }
+
+        #disable-vmp
+
+        if defined vtune { `simics_utils.vtune_start(name="vtune_os_boot")` }        
+
+        if `"centos" in simenv.os_type.lower() or "svos" in simenv.os_type.lower()` { bp.console_string.wait-for $sercon " login:" }
+        if `"esxi" in simenv.os_type.lower()`   { bp.console_string.wait-for $sercon ("ESXi " + (params.get $t:ESXI_VERSION_STR) + " http://www.vmware.com") }
+        if `simenv.disk_image` {
+            if `"26100_hsd_18039522638" in simenv.disk_image.lower()` {
+                bp.gfx.wait-for $system.console.con "%script%/win_26100_hsd_18039522638.brk" interval = 1
+            } else if `"win" in simenv.disk_image.lower()` {
+                # $disk_image has to have the string "win", it is required for properly adding "avx512,amx" to $perf_profile in common/modules/server/pylib/system_init/wa_init.py
+                bp.hap.wait-for "Core_Magic_Instruction"
+            }
+        } else {
+            if `"win" in simenv.os_type.lower()` { bp.hap.wait-for "Core_Magic_Instruction" }
+        }
+        @simics_utils.SimPoint(primary_core).print_delta(start, "ROI (OS BOOT)")
+        print-vmp-disabled-reasons-stats
+        @simics_utils.print_vmp_stats()
+        if defined x86_state_track { `x86_state_track.report_and_clear()` }
+        set-image-memory-limit
+        print-image-memory-stats
+        if defined vtune { `simics_utils.vtune_stop('vtune_os_boot', f'{simenv.log_dir}/vtune_os_boot.svg', f'{simenv.log_dir}/vtune_os_boot.csv')` }
+        if defined probes {
+            try { probe_mon.summary max=0 } except {}
+            try { probe_mon.html-report html-dir=($log_dir+"/probe_mon") } except {}
+            try { probe_mon_host_mem_usage.summary max=0 } except {}
+        }
+        @simics_utils.SimPoint(primary_core).print_delta(zero, "TOTAL")
+        if defined perfmeter { $sp.stop; $sp.html-report html-dir=$log_dir }
+        if $system=="birchstream" { quit } else { stop }
+    }
+
+
+}
+
+#$system.log-level 0 -r
+#log-type $system -disable spec-viol -r
+#log-type $system -disable error -r
+#log-type $system -disable warning -r
+#log-type $system -disable unimpl -r
+sim->stop_on_error = FALSE
+@run_command('list-processors-summary')
+@run_command('list-processors')
+
+if defined autorun {
+    if $autorun {
+        @print('boot_profiling.include: start running simulation')
+        run
+    }
+} else {
+    @print('boot_profiling.include: start running simulation')
+    run
+}
+

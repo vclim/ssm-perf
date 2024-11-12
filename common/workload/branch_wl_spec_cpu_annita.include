@@ -1,0 +1,33 @@
+if not defined con                      { $con = $system.serconsole.con }
+
+if not defined spec_cpu_size            { $spec_cpu_size = "ref" }
+if not defined spec_cpu_cores           { $spec_cpu_cores = 1 }
+if not defined spec_cpu_tune            { $spec_cpu_tune = "base" }
+if not defined spec_cpu_output_format   { $spec_cpu_output_format = "csv,txt,screen" }
+if not defined spec_cpu_topo_override   { $spec_cpu_topo_override = "" }
+#if not defined spec_cpu_copies         { $spec_cpu_copies = 1 } # for rate, this should be same as $spec_cpu_cores
+if not defined spec_cpu_iterations      { $spec_cpu_iterations = 1 }
+if not defined spec_cpu_avx             { $spec_cpu_avx = "avx2" }
+if not defined spec_cpu_compiler        { $spec_cpu_compiler = "icc" }
+if not defined spec_cpu_benchmark       { $spec_cpu_benchmark = "intrate" }
+   
+# http://marceline.zpn.intel.com/speccpu2017/yuhengzh/
+bp.console_string.wait-then-write $con "# " "tar xzf /host/nfs/site/disks/simcloud_suihaich_002/cluster/wl_files/spec2017.gcc.st.tgz \n"
+bp.console_string.wait-then-write $con "# " "cd spec2017.gcc/install/speccpu2017 \n" 
+
+bp.console_string.wait-then-write $con "# " "sed -i -e 's/numactl --localalloc --physcpubind=.* -- //' config/ci_framework.cfg \n"
+bp.console_string.wait-then-write $con "# " "sed -i -e 's/RUN_PATH=.*/RUN_PATH=\\/root\\/spec2017.gcc/' ci_run_spec.sh \n"
+bp.console_string.wait-then-write $con "# " ("sed -i -e 's/specrate/" + $spec_cpu_benchmark + "/' ci_run_spec.sh \n")
+bp.console_string.wait-then-write $con "# " ("sed -i -e 's/source shrc/source shrc; echo $LD_LIBRARY_PATH/' ci_run_spec.sh \n")
+
+# to run SRF binaries
+#bp.console_string.wait-then-write $con "# " "sed -i -e 's/build.O2 /build.O2.srf /' ci_run_spec.sh \n"
+#bp.console_string.wait-then-write $con "# " "sed -i -e 's/mtune_generic_o2_v2/ci_framework_temp/' ci_run_spec.sh \n"
+
+bp.console_string.wait-then-write $con "# " "cat ci_run_spec.sh \n"
+
+$wl_run_cmd = "./ci_run_spec.sh ; echo 'RUN SPEC IS DONE'; ls /root/spec2017.gcc/build.O2*/result/CPU2017.*.refrate.txt; cat /root/spec2017.gcc/build.O2*/result/CPU2017.*." + $spec_cpu_benchmark + ".refrate.txt \n"
+
+$wl_wait_string = "root@embargo speccpu2017" # the workload will print default wait string "# " so we need to set $wl_wait_string
+
+

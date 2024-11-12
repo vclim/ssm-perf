@@ -1,0 +1,48 @@
+run-script test/targets/smc.target.yml log_timestamp=TRUE
+
+smc.armcortex.a7[1].core->do_not_schedule = TRUE 
+log-setup -time-stamp
+@import os
+@os.environ['PATH'] += ':/nfs/site/disks/central_tools_tree/sles12/flamegraph/FlameGraph/'
+enable-unsupported-feature feature = vtune-measurement -v
+enable-unsupported-feature internals
+
+
+
+script-branch {
+    #new-instruction-histogram -connect-all    
+    #new-tracer-tool -connect-all file = trace.dump
+    #bp.bank.trace -all
+    
+    #$sp = ( new-system-perfmeter probe-collection=explore sampling-mode=virtual interval=1 -summary -window ) #-print-no-samples
+    #bp.console_string.wait-for smc.console.con "Net:" # "Board ID NOT SUPPORTED"
+    #$sp.html-report html-dir=.
+    #!mv index.html boot1.html
+    #$sp.delete
+    
+    #############################################################
+    
+    #new-sr-histogram processors = smc.armcortex.a7[0].core smc.armcortex.a7[1].core
+    $sp = ( new-system-perfmeter probe-collection=explore sampling-mode=virtual interval=1 -summary -window ) #-print-no-samples
+    #new-vtune-measurement vtune0 vtune-path=/nfs/site/disks/central_tools_tree/sles12/vtune/2022.1.0/bin64
+    #vtune0.start
+    
+    bp.console_string.wait-for smc.console.con " login:"
+    stop
+    
+    #sr_hist0.histogram
+    #sr_hist0.histogram -no-turbo
+    $sp.html-report html-dir=.
+    #!mv index.html boot2.html
+    #vtune0.stop
+    #vtune0.flamegraph svg-output-filename=boot2.svg
+    #vtune0.summary
+    #vtune0.thread-profile
+    #vtune0.module-profile
+    #vtune0.profile
+}
+
+
+
+
+run

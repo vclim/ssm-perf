@@ -1,0 +1,17 @@
+$log_dir = (resolve-file "%script%")
+$target = "birchstream/birchstream-ap-rwc-1_socket_ucc-00-generic"
+
+@cmd = [
+    f'load-target {simenv.target}', f'log_dir={simenv.log_dir}',
+    'os_type=centos_stream', 'ifwi_build_type=["release"]',    
+    'threading_mode=serialized', 'perf_profile="fast,direct_rdtsc"',
+    'disk_image="/nfs/site/disks/ssg_stc_simics_workloads/artifactory/simics-repos/ts/images/gnr/centos/centos-8-stream-embargo-coreserver-202303070226.craff"',
+    'n_cores=16',
+]
+
+@print(' '.join(cmd))
+@run_command(' '.join(cmd))
+
+run-command-file "%script%/../../../../common/boot_profiling.include" 
+run    
+

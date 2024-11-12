@@ -1,0 +1,59 @@
+script-branch { 
+    #if defined socket_check_barrier { wait-for-script-barrier $socket_check_barrier }
+    
+    # common setup
+    bp.console_string.wait-then-write $con "login:" "root\n"
+    if $image_pwd!="" {  bp.console_string.wait-then-write $con "Password:" ($image_pwd+"\n") }
+    bp.console_string.wait-then-write $con "# " "/root/os_setup/simicsfs-client/simicsfs-client /host/ \n"
+    # add root user to docker
+    bp.console_string.wait-then-write $con "# " "usermod -aG docker root \n"          
+    # enable and start docker
+    bp.console_string.wait-then-write $con "# " "systemctl enable --now docker \n"
+
+    # WL specific setup
+    if $workload=="dummy" { 
+        $wl_run_cmd = "\n" 
+    } else { 
+        run-command-file ( "%script%/branch_wl_" + $workload + ".include" )
+    }
+
+    # probe monitor for performance profiling
+    if not defined perfmeter { $perfmeter = FALSE }
+    if $perfmeter {
+        new-system-perfmeter 60 -summary -mips -exec-modes  -io
+        sp0.add-probe mode=session probe=sim.esteps
+        sp0.add-probe mode=session probe=sim.steps
+    }
+    @print("---WL STARTED---")
+    @simics_utils.print_vmp_stats() # note that we cannot clear vmp stats
+    clear-vmp-disabled-reasons-stats
+    clear-io-stats
+    @start = simics_utils.SimPoint(primary_core)
+    
+    # run WL
+    if defined wl_run_cmd_override          { $wl_run_cmd = $wl_run_cmd_override }
+    if $enable_perf_for_workload            { $wl_run_cmd = ("perf stat -B " +  $wl_run_cmd) }
+    if $enable_lit_trace                    { lit-recorder-start $log_dump -ih } 
+    bp.console_string.wait-then-write $con "# " ( $wl_run_cmd )
+
+    # WL completion
+    if defined wl_wait_string { bp.console_string.wait-for $con $wl_wait_string }
+    bp.console_string.wait-then-write $con "# " "\n"
+
+    # print WL summary
+    @print("---WL COMPLETED---")
+    @simics_utils.SimPoint(primary_core).print_delta(start, "ROI")
+    print-vmp-disabled-reasons-stats
+    @simics_utils.print_vmp_stats()
+
+    #if defined branch_barrier { wait-for-script-barrier $branch_barrier }        
+    stop 
+}
+
+script-branch {
+    bp.console_string.wait-for $con "trap invalid opcode"
+    print("WL FAILED : invalid opcode trapped!")
+    bp.console_string.wait-for $con "\n"
+    bp.console_string.wait-for $con "\n"    
+    quit 1
+}

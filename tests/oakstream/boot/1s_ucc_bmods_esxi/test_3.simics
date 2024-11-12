@@ -1,0 +1,33 @@
+### this is an example of using targets/oakstream/oakstream.simics instead of "oakstream/1_socket_ucc-generic" target
+### it will hit error in boot tester python code where it tries to get this parameter: ESXI_VERSION_STR
+### I didn't figure out how to add a parameter. The only way to make it work seems to be recompile srv-tests and remove the use of ESXI_VERSION_STR
+### Also simulation will stop after bios boots, but continue running it will eventually boot esxi
+
+
+$log_dir = (resolve-file "%script%")
+$target = "oakstream/1_socket_ucc-generic"
+
+$os_type = "esxi800"    
+$os_product_type = "consumer"    
+$os_build_type = "debug"
+$os_version = "U2-EA2-11372496"
+#$networking:create_network = TRUE
+#$networking:i82599_present = TRUE
+$ESXI_VERSION_STR = "8.0.2"
+$threading_mode = "serialized" 
+$perf_profile = "default,direct_rdtsc"
+$ifwi_build_type = ["release"]
+$init_testers = TRUE
+
+
+run-command-file "%simics%/targets/oakstream/oakstream.simics"
+sim->fail_on_warnings = FALSE
+enable-real-time-mode # to make the edit of boot option easier to see
+
+@conf.boot_tester.enable_sie_check = False # to improve performance
+@conf.boot_tester.iface.tester.boot_test(conf.boot_tester.iface.tester.get_exec_mode('ESXI_DEBUG_MODE'), conf.boot_tester.iface.tester.get_scenario('SIMPLEBOOT'))
+
+script-branch {
+    bp.console_string.wait-for oakstream.serconsole.con ("ESXi " + $ESXI_VERSION_STR + " http://www.vmware.com")
+    stop
+}    

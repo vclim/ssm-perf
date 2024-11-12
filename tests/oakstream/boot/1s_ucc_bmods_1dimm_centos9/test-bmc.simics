@@ -1,0 +1,50 @@
+$log_dir = (resolve-file "%script%")
+$target = "oakstream/1_socket_ucc-bmc"
+
+@cmd = [
+    f'load-target {simenv.target}', f'log_dir={simenv.log_dir}',
+    'os_type=centos_stream', 'ifwi_build_type=["release"]',
+    'threading_mode=serialized', 'perf_profile="fast,direct_rdtsc"',
+    #'use_fast_caching=TRUE',
+    #'full_mem_decode=FALSE',
+    f'presets=[["{simenv.log_dir}/../../../../common/dimms_1s_1x32GB.preset.yml",""],["{simenv.log_dir}/../../../../common/knobs_disable_magic_rowhammer.preset.yml",""]]',
+    'n_cores=4', # got kernel panic on  6.7.2.1.2 image, no panic on 6.9.3.6.5 image but doesn't improve performance
+    #'disk_image="/nfs/site/disks/simcloud_suihaich_002/collateral/dmr/dmr-bkc-centos-stream-9-coreserver-6.9-3.6-5.craff"',
+]
+
+@print(' '.join(cmd))
+@run_command(' '.join(cmd))
+
+set-time-quantum 100e-6 # restore to the same time quantum as bmod case
+
+if defined mca { enable-subsystem-threading }
+
+if defined single_arm_core {
+    # profile single arm core performance
+    oakstream.mb.bmc.armcortexa7.core[1]->do_not_schedule = TRUE
+    foreach $c in (oakstream.mb->cpu_list) { $c->do_not_schedule = TRUE }
+    
+    $sp = ( new-system-perfmeter probe-collection=explore sampling-mode=virtual interval=1 -summary -window ) #-print-no-samples
+    
+    #enable-probes
+    #new-instruction-histogram parent = oakstream.mb.bmc.armcortexa7 name = ihist_bmc
+    #new-probe-monitor name = pm_ihist_bmc sampling-mode = virtual interval = 1 clock = "oakstream.mb.bmc.armcortexa7.core[0]" -print-no-samples output-file = ($log_dir+"/pm_ihist_bmc.txt")
+    #pm_ihist_bmc.add-probe sim.time.virtual mode = current
+    #pm_ihist_bmc.add-probe probe = oakstream.mb.bmc.armcortexa7.core[0]:cpu.disabled_reason mode = current
+    #pm_ihist_bmc.add-probe sim.slowdown sim.time.schedule sim.esteps sim.mips sim.load_percent sim.io_access_count
+    #pm_ihist_bmc.add-probe probe = oakstream.mb.bmc.armcortexa7.core[0]:cpu.instructions_per_cycle oakstream.mb.bmc.armcortexa7.core[0]:cpu.schedule_percent #oakstream.mb.bmc.armcortexa7.core[0]:cpu.time.schedule oakstream.mb.bmc.armcortexa7.core[0]:cpu.esteps oakstream.mb.bmc.armcortexa7.core[0]:cpu.mips #oakstream.mb.bmc.armcortexa7.core[0]:cpu.exec_mode.
+    #pm_ihist_bmc.add-probe probe = oakstream.mb.bmc.armcortexa7.core[0]:cpu.tool.instruction_histogram.ihist_bmc.histogram
+    #run 60 s
+    
+    script-branch { 
+        bp.console_string.wait-for oakstream.mb.bmc.debugconsole.con " login:"
+        stop
+        $sp.html-report html-dir=$log_dir
+    }
+    sim->stop_on_error = FALSE
+    run
+} else {
+    run-command-file "%script%/../../../../common/boot_profiling.include" 
+}
+
+

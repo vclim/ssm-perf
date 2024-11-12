@@ -1,0 +1,10 @@
+# /nfs/site/home/suihaich/simcloud_releases/packages/1000/6.0.209/bin/project-setup --ignore-existing-files .
+
+../../2096/6.0.87
+../../4094/6.0.16
+../../8112/6.0.29
+../../1033/6.0.6
+../../1030/6.0.18
+../../1031/6.0.6
+/nfs/site/home/suihaich/simcloud_releases_cpu/simics-ts-ia-cpu-6.0.pre154
+/nfs/site/disks/utf/tools/iwps/intelwps-internal-conf-24.05-2024-05-13-lin/simics/simics-sniper-6.0.126.0

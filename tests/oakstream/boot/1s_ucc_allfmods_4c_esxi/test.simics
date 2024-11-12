@@ -1,0 +1,31 @@
+$log_dir = (resolve-file "%script%")
+$target = "oakstream/1_socket_ucc-aunit-bmc-cbbpunit-ese-imhpunit-oobmsm-pfrprot-s3m"
+
+@cmd = [
+    f'load-target {simenv.target}', f'log_dir={simenv.log_dir}',
+    'os_type=esxi800',    
+    'os_product_type=consumer',    
+    'os_build_type=debug',
+    'os_version="U2-EA2-11372496"',
+    'networking:create_network=TRUE',
+    'networking:i82599_present=TRUE',
+    'ESXI_VERSION_STR=8.0.2',
+    'threading_mode=serialized', 'perf_profile="default,direct_rdtsc"', 'ifwi_build_type=["release"]',     
+    'n_cores=4',
+    f'preset="{simenv.log_dir}/../../../../common/knobs_skip_s3m_access_disable_magic_rowhammer.preset.yml"',
+]
+
+@print(' '.join(cmd))
+@run_command(' '.join(cmd))
+
+# enable ESXI Serial Debug port, see esxi_debug_enable in https://github.com/intel-restricted/applications.simulators.isim.vp/blob/develop/../common/modules/srv-tests/boot_tester.py
+$system = "oakstream"
+script-branch {
+    bp.gfx.wait-for $system.console.con "%script%/../../../../common/loading-vmware-hypervisor-edit.gfx" interval=1
+    $system.console.con.input "O"  # Shift+O
+    wait-for-global-time 2 -relative
+    $system.console.con.input " gdbPort=none logPort=none tty1Port=com1 checkPages=FALSE poisonPagePool=FALSE\n"    
+    @print("ESXI boot options modified!")
+}
+
+run-command-file "%script%/../../../../common/boot_profiling.include" 

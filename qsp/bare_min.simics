@@ -1,0 +1,26 @@
+# can we just have core+mem and run an obj file by setting instr pointer to it?
+
+# it's more complicated than i thought ... maybe eaiser to hack existing QSP (after loading it)
+
+
+
+load-module memory-comp
+
+@mem_space = pre_conf_object('phys_mem', 'memory-space')
+@port_space = pre_conf_object('port_proxy', 'memory-space')
+@SIM_add_configuration([mem_space, port_space], None)
+
+
+# Load correct component to create the processor component
+load-module class = processor-x86-panther-cove-diamond-rapids
+$cpu = (exec create-processor-x86-panther-cove-diamond-rapids
+            + " cpu0"
+			+ " freq_mhz = 2000"
+			+ " apic_freq_mhz = 133"
+			+ " use_vmp = TRUE"
+			+ " cpi = 1"
+			+ " n_cores = 1"
+			+ " n_threads = 1"
+        )
+instantiate-components
+

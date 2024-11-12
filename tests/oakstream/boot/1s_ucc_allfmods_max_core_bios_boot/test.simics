@@ -1,0 +1,19 @@
+$log_dir = (resolve-file "%script%")
+$target = "oakstream/1_socket_ucc-aunit-bmc-cbbpunit-ese-imhpunit-oobmsm-pfrprot-s3m"
+
+@cmd = [ 
+    f'load-target {simenv.target}', f'log_dir={simenv.log_dir}',
+    'os_type=uefi', 'ifwi_build_type=["release"]',
+    'threading_mode=serialized', 'perf_profile="fast,direct_rdtsc"',
+    'enabled_acp_mask=0xffffffff', 'n_cores=256',   
+    #'sim_fail_on_warnings=FALSE',  
+    #f'preset="{simenv.log_dir}/../../../../common/knobs_skip_s3m_access_disable_magic_rowhammer.preset.yml"', # skip s3m access knob is already set in targets/oakstream/1_socket_ucc-aunit-bmc-cbbpunit-ese-imhpunit-oobmsm-pfrprot-s3m.target.yml, we don't apply knob for disabling rowhammer for this test, as it causes bios boot time to increase and have high variance
+]
+
+@print(' '.join(cmd))
+@run_command(' '.join(cmd))
+
+sim->fail_on_warnings = FALSE
+run-command-file "%script%/../../../../common/boot_profiling.include" 
+
+

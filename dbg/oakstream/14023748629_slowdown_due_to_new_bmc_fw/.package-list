@@ -1,0 +1,4 @@
+# /nfs/site/disks/central_release_tree/sles11/simics/packages/1000/7.21.0/bin/project-setup  --ignore-existing-files .
+../../5006/7.0.0
+../../1033/7.5.0
+../../8145/7.0.0-pre.162

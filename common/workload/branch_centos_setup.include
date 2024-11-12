@@ -1,0 +1,152 @@
+if not defined con { $con = $system.serconsole.con }
+
+# start SimicsFS
+start-simicsfs-server
+
+script-branch { 
+    if defined socket_check_barrier { wait-for-script-barrier $socket_check_barrier }
+
+    bp.console_string.wait-then-write $con "login:" "root\n"
+
+    ## proxy settings 
+    bp.console_string.wait-then-write $con "# " "export all_proxy=http://proxy-chain.intel.com:911/\n"
+    bp.console_string.wait-then-write $con "# " "export ftp_proxy=http://proxy-chain.intel.com:911/\n"
+    bp.console_string.wait-then-write $con "# " "export http_proxy=http://proxy-chain.intel.com:911/\n"
+    bp.console_string.wait-then-write $con "# " "export https_proxy=http://proxy-chain.intel.com:912/\n"
+    bp.console_string.wait-then-write $con "# " "export no_proxy=\"intel.com,.intel.com,10.0.0.0/8,192.168.0.0/16,172.16.0.0/12,localhost,127.0.0.0/8,127.0.0.1\"\n"
+    bp.console_string.wait-then-write $con "# " "export socks_proxy=\"socks://proxy-chain.intel.com:1080/\"\n"
+    bp.console_string.wait-then-write $con "# " "export ALL_PROXY=http://proxy-chain.intel.com:911/\n"
+    bp.console_string.wait-then-write $con "# " "export FTP_PROXY=http://proxy-chain.intel.com:911/\n"
+    bp.console_string.wait-then-write $con "# " "export HTTP_PROXY=http://proxy-chain.intel.com:911/\n"
+    bp.console_string.wait-then-write $con "# " "export HTTPS_PROXY=http://proxy-chain.intel.com:912/\n"
+    bp.console_string.wait-then-write $con "# " "export NO_PROXY=\"intel.com,.intel.com,10.0.0.0/8,192.168.0.0/16,172.16.0.0/12,localhost,127.0.0.0/8,127.0.0.1\"\n"
+    bp.console_string.wait-then-write $con "# " "export SOCKS_PROXY=\"socks://proxy-chain.intel.com:1080/\"\n"
+    bp.console_string.wait-then-write $con "# " "sleep 50 \n"
+    bp.console_string.wait-then-write $con "# " "wget google.com\n"
+
+
+    # simicsfs (the Makefile in simicsfs-client is already modified according to https://wiki.ith.intel.com/display/SRESIMICS/How+to+mount+the+host+filesystem+into+Simics+CentOS+guest)
+    bp.console_string.wait-then-write $con "# " "sleep 15 \n"
+    bp.console_string.wait-then-write $con "# " "mkdir os_setup \n"
+    bp.console_string.wait-then-write $con "# " "cd os_setup \n"
+    bp.console_string.wait-then-write $con "# " "scp suihaich@zsc2-login.zsc2.intel.com:/nfs/site/disks/simcloud_suihaich_002/cluster/os_files/simicsfs_6.0.115.tar . \n"
+    bp.console_string.wait-then-write $con "# " "tar -xf simicsfs_6.0.115.tar \n"
+    bp.console_string.wait-then-write $con "# " "dnf upgrade -y \n"
+    bp.console_string.wait-then-write $con "# " "dnf groupinstall -y 'Development Tools'  \n"
+    bp.console_string.wait-then-write $con "# " "dnf install -y fuse-devel  \n" 
+    bp.console_string.wait-then-write $con "# " "mkdir /host  \n"
+    bp.console_string.wait-then-write $con "# " "cd ./libmagicpipe  \n"
+    bp.console_string.wait-then-write $con "# " "make  \n"
+    bp.console_string.wait-then-write $con "# " "cd ../simicsfs-client  \n"
+    bp.console_string.wait-then-write $con "# " "make  \n"  
+    bp.console_string.wait-then-write $con "# " "./simicsfs-client /host/ \n"
+
+    # other setups
+    bp.console_string.wait-then-write $con "# " "cp /host/nfs/site/disks/simcloud_suihaich_002/cluster/os_files/os_setup.tar ~/ \n"
+    bp.console_string.wait-then-write $con "# " "cd ~/ \n"
+    bp.console_string.wait-then-write $con "# " "tar -xf os_setup.tar \n"
+    bp.console_string.wait-then-write $con "# " "cd os_setup \n"
+    bp.console_string.wait-then-write $con "# " "cat etc_environment >> /etc/environment \n"
+    bp.console_string.wait-then-write $con "# " "cat etc_yum.conf >> /etc/yum.conf \n" # overwrite?
+    bp.console_string.wait-then-write $con "# " "cp etc_sudoers.d_proxy /etc/sudoers.d/proxy \n"
+    bp.console_string.wait-then-write $con "# " "cp gitconfig ~/.gitconfig \n"
+    
+    bp.console_string.wait-then-write $con "# " "dnf install -y bash-completion vim git tmux rsync tree unzip tar wget numactl python3 libnsl nmap perf \n"      
+    bp.console_string.wait-then-write $con "# " "dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo \n"
+    
+    #Add python3 and robotframework, virtualenv and docker utilities
+    bp.console_string.wait-then-write $con "# " "pip3 install robotframework virtualenv  docker\n"
+    
+    bp.console_string.wait-then-write $con "# " "dnf list docker-ce\n"
+    bp.console_string.wait-then-write $con "# " "dnf install docker-ce docker-ce-cli containerd.io docker-compose-plugin --nobest -y\n"
+    
+    bp.console_string.wait-then-write $con "# " "mkdir ~/.docker \n"
+    bp.console_string.wait-then-write $con "# " "cat docker_config.json >> !$/config.json \n"
+    
+    bp.console_string.wait-then-write $con "# " "mkdir -p /etc/systemd/system/docker.service.d \n"
+    bp.console_string.wait-then-write $con "# " "cat docker_proxy.conf >> !$/proxy.conf \n"
+    
+    # add root user to docker
+    bp.console_string.wait-then-write $con "# " "usermod -aG docker root\n"
+    
+    # enable and start docker
+    bp.console_string.wait-then-write $con "# " "systemctl enable --now docker\n"
+    
+    # certificates (based on old instructions, new instructions are in https://github.com/intel-innersource/applications.benchmarking.benchmark.platform-hero-features/blob/master/doc/certificate.md)
+    bp.console_string.wait-then-write $con "# " "mkdir -p certs\n"
+    bp.console_string.wait-then-write $con "# " "cd certs\n"
+    bp.console_string.wait-then-write $con "# " "curl --fail --silent --show-error --remote-name http://certificates.intel.com/repository/certificates/IntelSHA2RootChain-Base64.zip \n"
+    bp.console_string.wait-then-write $con "# " "curl --fail --silent --show-error --remote-name http://certificates.intel.com/repository/certificates/PublicSHA2RootChain-Base64-crosssigned.zip \n"
+    bp.console_string.wait-then-write $con "# " "curl --fail --silent --show-error --remote-name http://certificates.intel.com/repository/certificates/ComodoExternalIssuingCA_base64_Chain.zip \n"
+    bp.console_string.wait-then-write $con "# " "curl --fail --silent --show-error --remote-name http://certificates.intel.com/repository/certificates/Intel%20Root%20Certificate%20Chain%20Base64.zip \n"
+    bp.console_string.wait-then-write $con "# " "curl --fail --silent --show-error --remote-name http://certificates.intel.com/repository/certificates/Public%20Root%20Certificate%20Chain%20Base64.zip \n"
+    bp.console_string.wait-then-write $con "# " "unzip -o IntelSHA2RootChain-Base64.zip \n"
+    bp.console_string.wait-then-write $con "# " "unzip -o PublicSHA2RootChain-Base64-crosssigned.zip \n"
+    bp.console_string.wait-then-write $con "# " "unzip -o ComodoExternalIssuingCA_base64_Chain.zip \n"
+    bp.console_string.wait-then-write $con "# " "unzip -o Intel%20Root%20Certificate%20Chain%20Base64.zip \n"
+    bp.console_string.wait-then-write $con "# " "unzip -o Public%20Root%20Certificate%20Chain%20Base64.zip \n"
+    bp.console_string.wait-then-write $con "# " "rm -f *.zip \n"
+    bp.console_string.wait-then-write $con "# " "cd .. \n"
+    bp.console_string.wait-then-write $con "# " "mkdir -p /etc/pki/tls/certs/ \n"
+    bp.console_string.wait-then-write $con "# " "mv certs/* !$ \n" 
+    
+    # marceline has a self signed certificate
+    bp.console_string.wait-then-write $con "# " "mkdir -p /etc/docker/certs.d/marceline.zpn.intel.com/ \n"
+    bp.console_string.wait-then-write $con "# " "cp ca.crt !$ \n"
+    bp.console_string.wait-then-write $con "# " "cp ca.crt /etc/pki/tls/certs/ \n"
+    
+    bp.console_string.wait-then-write $con "# " "systemctl enable docker \n"        
+        
+    # oneapi
+    bp.console_string.wait-then-write $con "# " "bash /host/nfs/site/disks/simcloud_suihaich_002/cluster/os_files/l_BaseKit_p_2022.1.1.119_offline.sh -a --silent --eula accept \n"
+    bp.console_string.wait-then-write $con "# " "bash /host/nfs/site/disks/simcloud_suihaich_002/cluster/os_files/l_HPCKit_p_2022.1.1.97_offline.sh -a --silent --eula accept \n"
+
+    # qemu
+    bp.console_string.wait-then-write $con "# " "yum install -y qemu-kvm qemu-img virt-manager libvirt  libvirt-client virt-install virt-viewer \n"
+
+    # DSB https://github.com/delimitrou/DeathStarBench/
+    bp.console_string.wait-then-write $con "# " "cd ~/ \n"
+    bp.console_string.wait-then-write $con "# " "git clone https://github.com/delimitrou/DeathStarBench.git \n"
+
+    # required collaterals for DSB
+    bp.console_string.wait-then-write $con "# " "pip3 install aiohttp \n"
+    bp.console_string.wait-then-write $con "# " "pip3 install asyncio \n"
+    bp.console_string.wait-then-write $con "# " "dnf install -y openssl-devel \n"
+    bp.console_string.wait-then-write $con "# " "dnf install -y zlib-devel \n"
+
+    # lua and luarocks (required for DSB): https://github.com/luarocks/luarocks/wiki/Installation-instructions-for-Unix
+    bp.console_string.wait-then-write $con "# " "dnf install -y libtermcap-devel ncurses-devel libevent-devel readline-devel \n"
+    bp.console_string.wait-then-write $con "# " "curl -R -O http://www.lua.org/ftp/lua-5.3.5.tar.gz \n"
+    bp.console_string.wait-then-write $con "# " "tar -zxf lua-5.3.5.tar.gz \n"
+    bp.console_string.wait-then-write $con "# " "cd lua-5.3.5 \n"
+    bp.console_string.wait-then-write $con "# " "make linux test \n"
+    bp.console_string.wait-then-write $con "# " "make install \n"
+    bp.console_string.wait-then-write $con "# " "cd ~/ \n"
+    bp.console_string.wait-then-write $con "# " "wget https://luarocks.org/releases/luarocks-3.8.0.tar.gz \n"
+    bp.console_string.wait-then-write $con "# " "tar zxpf luarocks-3.8.0.tar.gz \n"
+    bp.console_string.wait-then-write $con "# " "cd luarocks-3.8.0 \n"
+    bp.console_string.wait-then-write $con "# " "./configure --with-lua-include=/usr/local/include \n"
+    bp.console_string.wait-then-write $con "# " "make \n"
+    bp.console_string.wait-then-write $con "# " "make install \n"
+    bp.console_string.wait-then-write $con "# " "luarocks install luasocket \n"
+    bp.console_string.wait-then-write $con "# " "cd ~/ \n"
+
+    # install GUI desktop (but not enable it by default, to enable do "systemctl set-default graphical")
+    #bp.console_string.wait-then-write $con "# " "dnf groupinstall 'Server with GUI' --allowerasing -y \n"
+    # after installing GUI the network proxy no loner works... 
+
+    # set root password
+    bp.console_string.wait-then-write $con "# " "passwd root\n"
+    bp.console_string.wait-then-write $con "password:" "intel123\n"
+    bp.console_string.wait-then-write $con "password:" "intel123\n"
+
+    # reboot
+    bp.console_string.wait-then-write $con "# " "sleep 15 \n"
+    bp.console_string.wait-then-write $con "# " "reboot now \n"
+    bp.console_string.wait-then-write $con "login:" "root\n"
+    bp.console_string.wait-then-write $con "Password:" "intel123\n"
+    bp.console_string.wait-then-write $con "# " " \n"
+
+    if defined branch_barrier { wait-for-script-barrier $branch_barrier }        
+}
+

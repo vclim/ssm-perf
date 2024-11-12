@@ -1,0 +1,44 @@
+if not defined con { $con = $system.serconsole.con }
+
+$binary_tests = [
+"avx-ifma-vpmaddhuq-2",
+"avx-ifma-vpmaddluq-2",
+"avx-ne-convert-vbcstnebf162ps-2",
+"avx-ne-convert-vbcstnesh2ps-2",
+"avx-ne-convert-vcvtneebf162ps-2",
+"avx-ne-convert-vcvtneeph2ps-2",
+"avx-ne-convert-vcvtneobf162ps-2",
+"avx-ne-convert-vcvtneoph2ps-2",
+"avx-ne-convert-vcvtneps2bf16-2",
+"avxavxvnniint8-vpdpbssds-2",
+"avxavxvnniint8-vpdpbsud-2",
+"avxavxvnniint8-vpdpbsuds-2",
+"avxavxvnniint8-vpdpbuud-2",
+"avxavxvnniint8-vpdpbuuds-2",
+"avxvnniint8-vpdpbssd-2",
+"avxvnniint16-vpdpwsud-2",
+"avxvnniint16-vpdpwsuds-2",
+"avxvnniint16-vpdpwusd-2",
+"avxvnniint16-vpdpwusds-2",
+"avxvnniint16-vpdpwuud-2",
+"avxvnniint16-vpdpwuuds-2",
+"cmpccxadd-2"
+]
+
+bp.console_string.wait-then-write $con "# " "sleep 20 \n"
+bp.console_string.wait-then-write $con "# " "mkdir srf-binaries \n"
+bp.console_string.wait-then-write $con "# " "cd srf-binaries \n"
+foreach $t in $binary_tests {
+    bp.console_string.wait-then-write $con "# " ("wget http://marceline.zpn.intel.com/srf-binaries/" + $t + "\n")
+}
+#bp.console_string.wait-then-write $con "# " "gzip -d srf-binaries.tar.gz \n"
+#bp.console_string.wait-then-write $con "# " "tar -xf srf-binaries.tar \n"
+bp.console_string.wait-then-write $con "# " "chmod +x * \n"
+bp.console_string.wait-then-write $con "# " "result=0 \n"
+# https://hsdes.intel.com/appstore/article/#/14015914457 , currently skipping the avx-ne-convert tests , will run them once CPU model supports them
+#bp.console_string.wait-then-write $con "# " "rm -f *avx-ne-convert* \n"
+
+$wl_run_cmd = "for i in $(ls .); do echo RUNNING-$i ; ./$i ; ((result+=$?)) ; done ; if test $result -eq 0; then echo PASS::$result ; fi \n"
+$wl_wait_string = "PASS::0"
+
+

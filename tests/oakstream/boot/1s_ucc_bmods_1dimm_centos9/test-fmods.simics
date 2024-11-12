@@ -1,0 +1,83 @@
+$log_dir = (resolve-file "%script%")
+$target = "oakstream/1_socket_ucc-aunit-cbbpunit-ese-imhpunit-oobmsm-s3m"
+
+@cmd = [
+    f'load-target {simenv.target}', f'log_dir={simenv.log_dir}',
+    'os_type=centos_stream', 'ifwi_build_type=["release"]',    
+    'threading_mode=serialized', 'perf_profile="fast,direct_rdtsc"',
+    #'use_fast_caching=TRUE',
+    #'full_mem_decode=FALSE',
+    ###this seems not working on pre173###f'presets=[["{simenv.log_dir}/../../../../common/dimms_1s_1x32GB.preset.yml",""],["{simenv.log_dir}/../../../../common/knobs_disable_magic_rowhammer.preset.yml",""]]',
+    'n_cores=4', # got kernel panic on  6.7.2.1.2 image, no panic on 6.9.3.6.5 image but doesn't improve performance
+    #'disk_image="/nfs/site/disks/simcloud_suihaich_002/collateral/dmr/dmr-bkc-centos-stream-9-coreserver-6.9-3.6-5.craff"',   
+    #'silent_workarounds=FALSE', 'log_timestamp=FALSE',
+    #'oobmsm:wa_set_step_rate1=FALSE',
+    #'oobmsm:wa_set_step_rate128=FALSE',
+    #'oobmsm:step_rate="1/1"',    
+    'oobmsm:uc_freq_mhz=50', # WA for https://hsdes.intel.com/appstore/article/#/14023607006
+]
+
+@print(' '.join(cmd))
+@run_command(' '.join(cmd))
+
+run-command-file "%script%/../../../../common/multithreading_1s_fmods.include"
+
+if not defined mca { $mca = 1 } # single thread (default)
+if $mca==2 {
+    @SIM_create_object('core_grouping_no_cbb', 'core_grouping_no_cbb', [])
+    @SIM_create_object('core_grouping_cbb', 'core_grouping_cbb', [])
+} else if $mca==3 {
+    @SIM_create_object('core_grouping_x86', 'core_grouping_x86', [])
+    @SIM_create_object('core_grouping_cbb', 'core_grouping_cbb', [])
+    @SIM_create_object('core_grouping_imh', 'core_grouping_imh', [])
+} else if $mca==4 {
+    @SIM_create_object('core_grouping_no_cbb', 'core_grouping_no_cbb', [])
+    @SIM_create_object('core_grouping_ese', 'core_grouping_ese', [])
+    @SIM_create_object('core_grouping_aunit', 'core_grouping_aunit', [])
+    @SIM_create_object('core_grouping_cbbpunit', 'core_grouping_cbbpunit', [])
+} else if $mca==5 {
+    # x86, imhpunit, s3m
+    @SIM_create_object('core_grouping_x86_imhpunit_s3m', 'core_grouping_x86_imhpunit_s3m', [])
+    @SIM_create_object('core_grouping_ese', 'core_grouping_ese', [])
+    @SIM_create_object('core_grouping_aunit', 'core_grouping_aunit', [])
+    @SIM_create_object('core_grouping_cbbpunit', 'core_grouping_cbbpunit', [])
+    @SIM_create_object('core_grouping_msm', 'core_grouping_msm', [])
+} else if $mca==6 {
+    @SIM_create_object('core_grouping_x86_s3m', 'core_grouping_x86_s3m', [])
+    @SIM_create_object('core_grouping_ese', 'core_grouping_ese', [])
+    @SIM_create_object('core_grouping_aunit', 'core_grouping_aunit', [])
+    @SIM_create_object('core_grouping_cbbpunit', 'core_grouping_cbbpunit', [])
+    @SIM_create_object('core_grouping_msm', 'core_grouping_msm', [])
+    @SIM_create_object('core_grouping_imhpunit', 'core_grouping_imhpunit', [])
+#} else if $mca==6 {
+#    # s3m, imhpunit
+#    @SIM_create_object('core_grouping_s3m_imhpunit', 'core_grouping_s3m_imhpunit', [])
+#    @SIM_create_object('core_grouping_ese', 'core_grouping_ese', [])
+#    @SIM_create_object('core_grouping_aunit', 'core_grouping_aunit', [])
+#    @SIM_create_object('core_grouping_cbbpunit', 'core_grouping_cbbpunit', [])
+#    @SIM_create_object('core_grouping_msm', 'core_grouping_msm', [])
+#    @SIM_create_object('core_grouping_x86', 'core_grouping_x86', [])
+} else if $mca==7 {
+    @SIM_create_object('core_grouping_s3m', 'core_grouping_s3m', [])
+    @SIM_create_object('core_grouping_imhpunit', 'core_grouping_imhpunit', [])
+    @SIM_create_object('core_grouping_ese', 'core_grouping_ese', [])
+    @SIM_create_object('core_grouping_aunit', 'core_grouping_aunit', [])
+    @SIM_create_object('core_grouping_cbbpunit', 'core_grouping_cbbpunit', [])
+    @SIM_create_object('core_grouping_msm', 'core_grouping_msm', [])
+    @SIM_create_object('core_grouping_x86', 'core_grouping_x86', [])
+}
+
+if $mca>1 {
+    enable-mca
+    enable-multithreading
+    
+    #enable-tech-preview freerunning
+    #enable-freerunning-mode
+}
+
+
+
+
+#new-system-perfmeter sampling-mode = virtual interval = 1 probe-collection = performance -window -summary
+run-command-file "%script%/../../../../common/boot_profiling.include"
+

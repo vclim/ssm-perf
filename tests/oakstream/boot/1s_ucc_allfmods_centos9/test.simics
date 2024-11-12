@@ -1,0 +1,17 @@
+$log_dir = (resolve-file "%script%")
+$target = "oakstream/1_socket_ucc-aunit-bmc-cbbpunit-ese-imhpunit-oobmsm-pfrprot-s3m"
+
+@cmd = [
+    f'load-target {simenv.target}', f'log_dir={simenv.log_dir}',
+    'os_type=centos_stream_9', 'ifwi_build_type=["release"]',    
+    'threading_mode=serialized', 'perf_profile="fast,direct_rdtsc"',
+    #'enabled_acp_mask=0xffffffff', 'n_cores=256',
+    f'preset="{simenv.log_dir}/../../../../common/knobs_skip_s3m_access_disable_magic_rowhammer.preset.yml"',
+]
+
+@print(' '.join(cmd))
+@run_command(' '.join(cmd))
+
+run-command-file "%script%/../../../../common/boot_profiling.include" 
+ 
+
